@@ -1,0 +1,14 @@
+**/*.ipynb
+audio
+BZNSYP
+ckpt
+log
+nohup.out
+obsolete
+output
+output_no_hanzi
+results
+samples
+synth
+**/.ipynb_checkpoints/
+**/__pycache__/

@@ -1,0 +1,10 @@
+librosa == 0.7.2
+numpy
+torch
+scipy
+matplotlib
+tensorboard
+ipdb
+perf-logger
+
+
