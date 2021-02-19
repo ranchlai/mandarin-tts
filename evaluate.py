@@ -33,20 +33,29 @@ def evaluate(model, step, vocoder=None):
 
     # Get dataset
     print('evaluating..')
+          
+        
+    # Get dataset
     if hp.with_hanzi:
-        dataset = Dataset("val.txt",'val_cn.txt',cn_vocab_file = './vocab_hanzi.txt',sort=False)
+        dataset = Dataset(filename_py="val.txt",vocab_file_py = 'vocab_pinyin.txt',
+                     filename_hz = "val_hanzi.txt",
+                     vocab_file_hz = 'vocab_hanzi.txt')
+        py_vocab_size = len(dataset.py_vocab)
+        hz_vocab_size = len(dataset.hz_vocab)
+
+
     else:
-        dataset = Dataset("val.txt",sort=False)
+        dataset = Dataset(filename_py="val.txt",vocab_file_py = 'vocab_pinyin.txt',
+                     filename_hz = None,
+                     vocab_file_hz = None)
+        py_vocab_size = len(dataset.py_vocab)
+        hz_vocab_size = None
+
     
     loader = DataLoader(dataset, batch_size=hp.batch_size**2, shuffle=False,
                         collate_fn=dataset.collate_fn, drop_last=False, num_workers=0, )
 
-    lines = open('/home/ranch/code/FastSpeech2/BZNSYP/stat.txt').read().split('\n')
-    min_f0 = float(lines[2].split(': ')[-1])
-    max_f0 = float(lines[3].split(': ')[-1])
 
-    min_e0 = float(lines[4].split(': ')[-1])
-    max_e0 = float(lines[5].split(': ')[-1])
 
     # Get loss function
     Loss = FastSpeech2Loss().to(device)
@@ -68,19 +77,17 @@ def evaluate(model, step, vocoder=None):
             # Get Data
             id_ = data_of_batch["id"]
             text = torch.from_numpy(data_of_batch["text"]).long().to(device)
-            cn_text = torch.from_numpy(data_of_batch["cn_text"]).long().to(device)
+            if hp.with_hanzi:
+                hz_text = torch.from_numpy(
+                data_of_batch["hz_text"]).long().to(device)
+            else:
+                hz_text = None
+                
             
             mel_target = torch.from_numpy(
                 data_of_batch["mel_target"]).float().to(device)
             D = torch.from_numpy(data_of_batch["D"]).int().to(device)
             log_D = torch.from_numpy(data_of_batch["log_D"]).int().to(device)
-#             f0 = torch.from_numpy(data_of_batch["f0"]).float().to(device)
-#             energy = torch.from_numpy(
-#                 data_of_batch["energy"]).float().to(device)
-            
-#             f0 = (f0-min_f0)/(max_f0-min_f0)
-#             energy = (energy-min_e0)/(max_e0-min_e0)
-            
             src_len = torch.from_numpy(
                 data_of_batch["src_len"]).long().to(device)
             mel_len = torch.from_numpy(
@@ -89,10 +96,9 @@ def evaluate(model, step, vocoder=None):
             max_mel_len = np.max(data_of_batch["mel_len"]).astype(np.int32)
 
             with torch.no_grad():
-                # Forward
                 mel_output, mel_postnet_output, log_duration_output, src_mask, mel_mask, out_mel_len = model(
-                    text, src_len, cn_seq=cn_text,mel_len=mel_len, d_target=D,  
-                    max_src_len=max_src_len, max_mel_len=max_mel_len)
+                src_seq=text, src_len=src_len, hz_seq=hz_text,mel_len=mel_len,
+                d_target=D, max_src_len=max_src_len, max_mel_len=max_mel_len)
                 # Cal Loss
                 mel_loss, mel_postnet_loss, d_loss = Loss(
                     log_duration_output, log_D, mel_output, mel_postnet_output, mel_target, ~src_mask, ~mel_mask)
@@ -180,28 +186,3 @@ def evaluate(model, step, vocoder=None):
     return d_l,  mel_l, mel_p_l
 
 
-if __name__ == "__main__":
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--step', type=int, default=30000)
-    args = parser.parse_args()
-
-    # Get model
-    model = get_FastSpeech2(args.step).to(device)
-    print("Model Has Been Defined")
-    num_param = utils.get_param_num(model)
-    print('Number of FastSpeech2 Parameters:', num_param)
-
-    # Load vocoder
-    if hp.vocoder == 'melgan':
-        vocoder = utils.get_melgan()
-    elif hp.vocoder == 'waveglow':
-        vocoder = utils.get_waveglow()
-
-    # Init directories
-    if not os.path.exists(hp.log_path):
-        os.makedirs(hp.log_path)
-    if not os.path.exists(hp.eval_path):
-        os.makedirs(hp.eval_path)
-
-    evaluate(model, args.step, vocoder)

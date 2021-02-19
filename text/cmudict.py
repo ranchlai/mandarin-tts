@@ -4,7 +4,7 @@ import re
 
 
 #valid_symbols = open('./BZNSYP/phones.txt').read().split('\n')
-valid_symbols = open('./vocab_pinyin.txt').read().split('\n')
+valid_symbols = open('./data/vocab_pinyin.txt').read().split('\n')
 
 _valid_symbol_set = set(valid_symbols)
 

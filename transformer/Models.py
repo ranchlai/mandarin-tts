@@ -4,7 +4,7 @@ import numpy as np
 from ipdb import set_trace
 import transformer.Constants as Constants
 from transformer.Layers import FFTBlock
-from text.symbols import symbols
+#from text.symbols import symbols
 import hparams as hp
 
 
@@ -34,8 +34,8 @@ class Encoder(nn.Module):
     ''' Encoder '''
 
     def __init__(self,
-                 n_src_vocab=len(symbols)+1,
-                 cn_vocab = None,
+                 py_vocab_size,
+                 hz_vocab_size=None,
                  len_max_seq=hp.max_seq_len,
                  d_word_vec=hp.encoder_hidden,
                  n_layers=hp.encoder_layer,
@@ -51,16 +51,16 @@ class Encoder(nn.Module):
         n_position = len_max_seq + 1
 
         self.src_word_emb = nn.Embedding(
-            n_src_vocab, d_word_vec, padding_idx=Constants.PAD)
+            py_vocab_size, d_word_vec, padding_idx=Constants.PAD)
         
-        self.cn_vocab = cn_vocab
+        #self.hz_vocab = hz_vocab
         self.d_word_vec =d_word_vec
         
-        if cn_vocab is not None:
+        if hz_vocab_size is not None:
             self.cn_word_emb = nn.Embedding(
-                len(cn_vocab), hp.cn_emb_size, padding_idx=Constants.PAD)
+                hz_vocab_size, hp.hz_emb_size, padding_idx=Constants.PAD)
         else:
-            self.cn_word_emb = None
+            self.hz_word_emb = None
             
         self.position_enc = nn.Parameter(
             get_sinusoid_encoding_table(n_position, d_word_vec).unsqueeze(0), requires_grad=False)
@@ -68,7 +68,7 @@ class Encoder(nn.Module):
         self.layer_stack = nn.ModuleList([FFTBlock(
             d_model, d_inner, n_head, d_k, d_v, dropout=dropout) for _ in range(n_layers)])
 
-    def forward(self, src_seq, mask,cn_seq = None, return_attns=False):
+    def forward(self, src_seq, mask,hz_seq = None, return_attns=False):
 
         enc_slf_attn_list = []
         batch_size, max_len = src_seq.shape[0], src_seq.shape[1]
@@ -77,19 +77,19 @@ class Encoder(nn.Module):
         slf_attn_mask = mask.unsqueeze(1).expand(-1, max_len, -1)
         # -- Forward
         try:
-            if cn_seq is not None:
-                cn_emb = self.cn_word_emb(cn_seq)
-                z = torch.zeros((cn_emb.shape[0],cn_emb.shape[1],self.d_word_vec-hp.cn_emb_size)).to(cn_emb.device)
+            if hz_seq is not None:
+                hz_emb = self.cn_word_emb(hz_seq)
+                z = torch.zeros((hz_emb.shape[0],hz_emb.shape[1],self.d_word_vec-hp.hz_emb_size)).to(hz_emb.device)
                 #set_trace()
-                cn_emb = torch.cat([z,cn_emb],2)
+                hz_emb = torch.cat([z,hz_emb],2)
             else:
-                cn_emb = 0
+                hz_emb = 0
             if not self.training and src_seq.shape[1] > hp.max_seq_len:
                 enc_output = self.src_word_emb(src_seq) + get_sinusoid_encoding_table(src_seq.shape[1], hp.encoder_hidden)[
-                    :src_seq.shape[1], :].unsqueeze(0).expand(batch_size, -1, -1).to(src_seq.device) + cn_emb*hp.cn_emb_weight
+                    :src_seq.shape[1], :].unsqueeze(0).expand(batch_size, -1, -1).to(src_seq.device) + hz_emb*hp.hz_emb_weight
             else:
                 enc_output = self.src_word_emb(
-                    src_seq) + self.position_enc[:, :max_len, :].expand(batch_size, -1, -1) + cn_emb*hp.cn_emb_weight
+                    src_seq) + self.position_enc[:, :max_len, :].expand(batch_size, -1, -1) + hz_emb*hp.hz_emb_weight
         except:
             set_trace()
         for enc_layer in self.layer_stack:

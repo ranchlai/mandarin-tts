@@ -1,6 +1,5 @@
 import torch
 from torch.utils.data import Dataset, DataLoader
-
 import numpy as np
 import math
 import os
@@ -8,26 +7,33 @@ from ipdb import set_trace
 import hparams as hp
 import audio as Audio
 from utils import pad_1D, pad_2D, process_meta
-from text import text_to_sequence, sequence_to_text
+#from text import text_to_sequence, sequence_to_text
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-
-
-
 class Dataset(Dataset):
-    def __init__(self, filename="train.txt",cn_filename = "train_cn.txt",cn_vocab_file = './cn_vocab.txt', sort=True,descent=False):
-        self.basename, self.text = process_meta(
-            os.path.join(hp.preprocessed_path, filename))
+    def __init__(self, filename_py="train.txt",vocab_file_py = 'vocab_pinyin.txt',
+                 filename_hz = "train_hanzi.txt",
+                 vocab_file_hz = 'vocab_hanzi.txt', sort=False,descent=False):
+        
+        self.basename, self.py_text = process_meta(
+            os.path.join(hp.preprocessed_path, filename_py))
         self.sort = sort
         
+        self.py_vocab = open(os.path.join(hp.preprocessed_path, vocab_file_py)).read().split('\n')
+        
+        assert('pad' in self.py_vocab and 'sp1' in self.py_vocab  and 'sil' in self.py_vocab)
+        _, self.py_text = process_meta(
+            os.path.join(hp.preprocessed_path, filename_py))
+       
+        self.py2idx = dict([(c,i) for i,c in enumerate(self.py_vocab)])
+            
+            
+        
         if hp.with_hanzi:
-            self.cn_vocab = open(cn_vocab_file).read().split('\n')
-            assert('pad' in self.cn_vocab and 'sp1' in self.cn_vocab  and 'sil' in self.cn_vocab)
-
-            _, self.cn_text = process_meta(
-                os.path.join(hp.preprocessed_path, cn_filename))
-            self.cn2idx = dict([(c,i) for i,c in enumerate(self.cn_vocab)])
-            self.idx2cn = dict([(i,c) for i,c in enumerate(self.cn_vocab)])
+            self.hz_vocab = open(os.path.join(hp.preprocessed_path, vocab_file_hz)).read().split('\n')
+            assert('pad' in self.hz_vocab and 'sp1' in self.hz_vocab  and 'sil' in self.hz_vocab)
+            _, self.hz_text = process_meta(
+                os.path.join(hp.preprocessed_path, filename_hz))
+            self.hz2idx = dict([(c,i) for i,c in enumerate(self.hz_vocab)])
         
         if sort:
             names = [l.split('|')[0] for l in open(os.path.join(hp.preprocessed_path, filename)).read().split('\n')[:-1]]
@@ -45,7 +51,7 @@ class Dataset(Dataset):
         
 
     def __len__(self):
-        return len(self.text)
+        return len(self.py_text)
 
     def __getitem__(self, idx):
         if self.descent:
@@ -56,13 +62,12 @@ class Dataset(Dataset):
             basename = self.basename[idx]
         except:
             set_trace()
-        
-        phone = np.array(text_to_sequence(self.text[idx], []))
+        py_array = np.array([self.py2idx[c] for c in self.py_text[idx].split()])
         if hp.with_hanzi:
-            cn_array = np.array([self.cn2idx[c] for c in self.cn_text[idx].split()])
+            hz_array = np.array([self.hz2idx[c] for c in self.hz_text[idx].split()])
             
         else:
-            cn_array = None
+            hzarray = None
         
         mel_path = os.path.join(
             hp.preprocessed_path, "mel", "{}-mel-{}.npy".format(hp.dataset, basename))
@@ -70,20 +75,21 @@ class Dataset(Dataset):
         D_path = os.path.join(
             hp.preprocessed_path, "alignment", "{}-ali-{}.npy".format(hp.dataset, basename))
         D = np.load(D_path)#*0.45937500000000003
-        f0_path = os.path.join(
-            hp.preprocessed_path, "f0", "{}-f0-{}.npy".format(hp.dataset, basename))
-        f0 = None#np.load(f0_path)
-        energy_path = os.path.join(
-            hp.preprocessed_path, "energy", "{}-energy-{}.npy".format(hp.dataset, basename))
-        energy = None#np.load(energy_path)
+        #f0_path = os.path.join(
+          #  hp.preprocessed_path, "f0", "{}-f0-{}.npy".format(hp.dataset, basename))
+        #f0 = None#np.load(f0_path)
+       # energy_path = os.path.join(
+           # hp.preprocessed_path, "energy", "{}-energy-{}.npy".format(hp.dataset, basename))
+     #   energy = None#np.load(energy_path)
 
         sample = {"id": basename,
-                  "text": phone,
-                   "cn_text":cn_array,
+                  "text": py_array,
+                   "hz_text":hz_array,
                   "mel_target": mel_target,#+6.030292,
-                  "D": D,
-                  "f0": f0,
-                  "energy": energy}
+                  "D": D
+                  #"f0": f0,
+                  #"energy": energy
+                 }
 
         return sample
 
@@ -92,12 +98,12 @@ class Dataset(Dataset):
         texts = [batch[ind]["text"] for ind in cut_list]
         
         if hp.with_hanzi:
-            cn_texts = [batch[ind]["cn_text"] for ind in cut_list]
+            hz_texts = [batch[ind]["hz_text"] for ind in cut_list]
         
         mel_targets = [batch[ind]["mel_target"] for ind in cut_list]
         Ds = [batch[ind]["D"] for ind in cut_list]
-        f0s = [batch[ind]["f0"] for ind in cut_list]
-        energies = [batch[ind]["energy"] for ind in cut_list]
+       # f0s = [batch[ind]["f0"] for ind in cut_list]
+       # energies = [batch[ind]["energy"] for ind in cut_list]
         for text, D, id_ in zip(texts, Ds, ids):
             if len(text) != len(D):
                 print(text, text.shape, D, D.shape, id_)
@@ -111,27 +117,26 @@ class Dataset(Dataset):
 
         texts = pad_1D(texts)
         if hp.with_hanzi:
-            cn_texts = pad_1D(cn_texts)
+            hz_texts = pad_1D(hz_texts)
         else:
-            cn_texts = None
+            hz_texts = None
             
         Ds  = [d-hp.duration_mean for d in Ds]
         
         Ds = pad_1D(Ds)
         mel_targets = pad_2D(mel_targets)
-        f0s = None#pad_1D(f0s)
-        energies = None#pad_1D(energies)
+       # f0s = None#pad_1D(f0s)
+       # energies = None#pad_1D(energies)
         #log_Ds = np.log(Ds + hp.log_offset)
 
         out = {"id": ids,
                "text": texts,
-               "cn_text": cn_texts,
-               
+               "hz_text": hz_texts,
                "mel_target": mel_targets,
                "D": Ds,
                "log_D": Ds,
-               "f0": f0s,
-               "energy": energies,
+               #"#f0": f0s,
+               #"energy": energies,
                "src_len": length_text,
                "mel_len": length_mel}
 

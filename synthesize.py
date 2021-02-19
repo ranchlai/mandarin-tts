@@ -5,7 +5,7 @@ import os
 import argparse
 from string import punctuation
 from fastspeech2 import FastSpeech2
-from text import text_to_sequence, sequence_to_text
+#from text import text_to_sequence, sequence_to_text
 import hparams as hp
 import utils
 import audio as Audio
@@ -15,9 +15,13 @@ import librosa
 from hz_utils import *
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #hp.with_hanzi = False
+
+
+
+            
 def preprocess(phone):
 
-    sequence = np.array(text_to_sequence(phone, hp.text_cleaners))
+    sequence = np.array([py2idx[p] for p in phone.split()])
     sequence = np.stack([sequence])
 
     return torch.from_numpy(sequence).long().to(device)
@@ -29,14 +33,10 @@ def get_FastSpeech2(model_path,with_hanzi=True):
     #checkpoint_path = '/home/ranch/code/FastSpeech2/ckpt/baker/checkpoint_380000.pth.tar'
     print('loading model from',model_path)
    
-    if with_hanzi:
-        with open('vocab_hanzi.txt') as F:
-            cn_vocab = F.read().split('\n')
-    else:
-        cn_vocab = None
-
     
-    model = FastSpeech2(cn_vocab = cn_vocab)
+
+    model = FastSpeech2(py_vocab_size,hz_vocab_size)
+
     sd = torch.load(model_path,map_location='cpu')
     if 'model' in sd.keys(): #checkpoint file
         sd = sd['model'] # using only the model part(rather than the optim part)
@@ -54,7 +54,7 @@ def synthesize(model, waveglow, py_text_seq,  cn_text_seq, duration_control=1.0,
     src_len = torch.from_numpy(np.array([py_text_seq.shape[1]])).to(device)
     
     mel, mel_postnet, log_duration_output, _, _, mel_len = model(
-        py_text_seq, src_len, cn_seq=cn_text_seq,d_control=duration_control)
+        py_text_seq, src_len, hz_seq=cn_text_seq,d_control=duration_control)
    # print(log_duration_output)
     mel_torch = mel.transpose(1, 2).detach()
     mel_postnet_torch = mel_postnet.transpose(1, 2).detach()
@@ -84,6 +84,20 @@ if __name__=='__main__':
     #parser.add_argument('--energy_control', type=float, default=1.0)
     args = parser.parse_args()
     
+    if args.with_hanzi:
+        with open(os.path.join(hp.preprocessed_path,'vocab_hanzi.txt')) as F:
+            cn_vocab = F.read().split('\n')
+            hz_vocab_size = len(cn_vocab)
+            hz2idx = dict([(c,i) for i,c in enumerate(cn_vocab)])
+    else:
+        hz_vocab_size = None
+
+    with open(os.path.join(hp.preprocessed_path,'vocab_pinyin.txt')) as F:
+            py_vocab = F.read().split('\n')
+            py_vocab_size = len(py_vocab) 
+            py2idx = dict([(c,i) for i,c in enumerate(py_vocab)])
+        
+    
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
         
@@ -112,7 +126,7 @@ if __name__=='__main__':
 #     if hp.with_hanzi:
 #         cn2idx = dict([(c,i) for i,c in enumerate(cn_vocab)])
 #         idx2cn = dict([(i,c) for i,c in enumerate(cn_vocab)])
-
+ 
     torch.set_grad_enabled(False)
     
     

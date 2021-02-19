@@ -1,3 +1,4 @@
+pad
 zhe4
 shui4
 mian2
@@ -1605,3 +1606,6 @@ wen5
 sou1
 run4
 jing5
+sp1
+spn
+sil

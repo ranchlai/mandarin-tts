@@ -2,14 +2,14 @@ import os
 
 # Dataset
 wav_path = "./BZNSYP/wav"
-#dataset = "Blizzard2013"
+dataset = "baker"
 #data_path = "./Blizzard-2013/train/segmented/"
 
 # Text
 
 with_hanzi = True
-cn_emb_size = 32
-cn_emb_weight=0.1
+hz_emb_size = 32
+hz_emb_weight=0.1
 
 # Audio and mel
 ### for LJSpeech ###

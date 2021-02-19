@@ -7,7 +7,7 @@ vocab_hanzi = set(''.join(text))
 vocab_hanzi = list(vocab_hanzi)
 skey = lambda h:pypinyin.pinyin(h)[0][0]
 vocab_hanzi = sorted(vocab_hanzi,key=skey)
-vocab_hanzi = ['pad'+'IY1']+vocab_hanzi[5:-15]+vocab_hanzi[-2:]+['sp1','sil']
+vocab_hanzi = ['pad','IY1']+vocab_hanzi[5:-15]+vocab_hanzi[-2:]+['sp1','sil']
 #vocab_hanzi[-10:]
 
 #cn_vocab
@@ -79,7 +79,7 @@ for name in train_name2py.keys():
     cn,py = map_name_to_cn_py(name)
     cn_augmented = augment_cn_with_specials(cn,train_py)
     new_lines += [name+'|'+cn_augmented]    
-with open('./data/train_cn.txt','wt') as F:
+with open('./data/train_hanzi.txt','wt') as F:
     F.write('\n'.join(new_lines))     
 
 lines = open('./data/val.txt').read().split('\n')[:-1]
@@ -92,6 +92,6 @@ for name in val_name2py.keys():
     cn,py = map_name_to_cn_py(name)
     cn_augmented = augment_cn_with_specials(cn,val_py)
     new_lines += [name+'|'+cn_augmented]    
-with open('./data/val_cn.txt','wt') as F:
+with open('./data/val_hanzi.txt','wt') as F:
     F.write('\n'.join(new_lines))  
     

@@ -34,7 +34,7 @@ def build_from_path(in_dir, out_dir):
         if ret is None:
             continue
         else:
-            info, f_max, f_min, e_max, e_min, n = ret
+            info,  n = ret #f_max, f_min, e_max, e_min,
 
         if basename[-2:] == '66':
             val.append(info)
@@ -46,19 +46,20 @@ def build_from_path(in_dir, out_dir):
             print("Done %d" % index)
         index = index + 1
 
-        f0_max = max(f0_max, f_max)
-        f0_min = min(f0_min, f_min)
-        energy_max = max(energy_max, e_max)
-        energy_min = min(energy_min, e_min)
+        #f0_max = max(f0_max, f_max)
+       # f0_min = min(f0_min, f_min)
+       # energy_max = max(energy_max, e_max)
+       # energy_min = min(energy_min, e_min)
         n_frames += n
 
     with open(os.path.join(out_dir, 'stat.txt'), 'w', encoding='utf-8') as f:
         strs = ['Total time: {} hours'.format(n_frames*hp.hop_length/hp.sampling_rate/3600),
                 'Total frames: {}'.format(n_frames),
-                'Min F0: {}'.format(f0_min),
-                'Max F0: {}'.format(f0_max),
-                'Min energy: {}'.format(energy_min),
-                'Max energy: {}'.format(energy_max)]
+                #'Min F0: {}'.format(f0_min),
+               # 'Max F0: {}'.format(f0_max),
+               # 'Min energy: {}'.format(energy_min),
+               # 'Max energy: {}'.format(energy_max)
+               ]
         for s in strs:
             print(s)
             f.write(s+'\n')
@@ -91,11 +92,11 @@ def process_utterance(in_dir, out_dir, basename):
         print(wav_path)
     wav = wav[int(hp.sampling_rate*start):int(hp.sampling_rate*end)].astype(np.float32)
 
-    # Compute fundamental frequency
-    f0, _ = pw.dio(wav.astype(np.float64), hp.sampling_rate,
-                   frame_period=hp.hop_length/hp.sampling_rate*1000)
+#     # Compute fundamental frequency
+#     f0, _ = pw.dio(wav.astype(np.float64), hp.sampling_rate,
+#                    frame_period=hp.hop_length/hp.sampling_rate*1000)
    
-    f0 = f0[:sum(duration)]
+#     f0 = f0[:sum(duration)]
    
     
     # Compute mel-scale spectrogram and energy
@@ -107,7 +108,7 @@ def process_utterance(in_dir, out_dir, basename):
     
    
     
-    energy = energy.numpy().astype(np.float32)[:sum(duration)]
+#     energy = energy.numpy().astype(np.float32)[:sum(duration)]
     if mel_spectrogram.shape[1] >= hp.max_seq_len:
         return None
 
@@ -117,14 +118,14 @@ def process_utterance(in_dir, out_dir, basename):
     np.save(os.path.join(out_dir, 'alignment', ali_filename),
             duration, allow_pickle=False)
 
-    # Save fundamental prequency
-    f0_filename = '{}-f0-{}.npy'.format(hp.dataset, basename)
-    np.save(os.path.join(out_dir, 'f0', f0_filename), f0, allow_pickle=False)
+#     # Save fundamental prequency
+#     f0_filename = '{}-f0-{}.npy'.format(hp.dataset, basename)
+#     np.save(os.path.join(out_dir, 'f0', f0_filename), f0, allow_pickle=False)
 
-    # Save energy
-    energy_filename = '{}-energy-{}.npy'.format(hp.dataset, basename)
-    np.save(os.path.join(out_dir, 'energy', energy_filename),
-            energy, allow_pickle=False)
+#     # Save energy
+#     energy_filename = '{}-energy-{}.npy'.format(hp.dataset, basename)
+#     np.save(os.path.join(out_dir, 'energy', energy_filename),
+#             energy, allow_pickle=False)
 
     # Save spectrogram
     mel_filename = '{}-mel-{}.npy'.format(hp.dataset, basename)
@@ -132,7 +133,9 @@ def process_utterance(in_dir, out_dir, basename):
             mel_spectrogram.T, allow_pickle=False)
     try:
         #set_trace()
-        ret = '|'.join([basename, text]), max(f0), min([f for f in f0 if f != 0]), max(energy), min(energy), mel_spectrogram.shape[1]
+        #ret = '|'.join([basename, text]), max(f0), min([f for f in f0 if f != 0]), max(energy), min(energy), mel_spectrogram.shape[1]
+        ret = '|'.join([basename, text]), mel_spectrogram.shape[1]
+        
        # print(ret)
     except:
         set_trace()
@@ -148,7 +151,7 @@ def write_metadata(train, val, out_dir):
             f.write(m + '\n')
 
 
-in_dir = hp.data_path
+in_dir = hp.wav_path
 out_dir = hp.preprocessed_path
 
 #in_dir = hp.data_path
@@ -159,12 +162,12 @@ if not os.path.exists(mel_out_dir):
 ali_out_dir = os.path.join(out_dir, "alignment")
 if not os.path.exists(ali_out_dir):
     os.makedirs(ali_out_dir, exist_ok=True)
-f0_out_dir = os.path.join(out_dir, "f0")
-if not os.path.exists(f0_out_dir):
-    os.makedirs(f0_out_dir, exist_ok=True)
-energy_out_dir = os.path.join(out_dir, "energy")
-if not os.path.exists(energy_out_dir):
-    os.makedirs(energy_out_dir, exist_ok=True)
+# f0_out_dir = os.path.join(out_dir, "f0")
+# if not os.path.exists(f0_out_dir):
+#     os.makedirs(f0_out_dir, exist_ok=True)
+# energy_out_dir = os.path.join(out_dir, "energy")
+# if not os.path.exists(energy_out_dir):
+#     os.makedirs(energy_out_dir, exist_ok=True)
 
 train, val = build_from_path(in_dir, out_dir)
 write_metadata(train, val, out_dir)

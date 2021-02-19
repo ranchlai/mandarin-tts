@@ -3,11 +3,12 @@ import pypinyin
 import numpy as np
 import hparams as hp
 import torch
+import os
 
 #sent = '知情人士称，特朗普已表示不会?参加:当选,总统拜登的就职典礼。'
 sp_tokens = '。？！?!.;；'
 if hp.with_hanzi:
-    with open('vocab_hanzi.txt') as F:
+    with open(os.path.join(hp.preprocessed_path,'vocab_hanzi.txt')) as F:
         cn_vocab = F.read().split('\n')
 else:
     cn_vocab = None
