@@ -1,6 +1,9 @@
 # Chinase mandarin text to speech base on FastSpeech 2
 
+This is an on-going work. I am still working on the details.  Code and model checkpoint will be updated in a few days. Please wait. 
 
+
+由于我的业余时间比较少，只能在晚上小孩睡觉后更新。 请等待更新。
 
 This is a modification and adpation of fastspeech 2 to mandrin. The code was  originally  implemented by https://github.com/ming024/FastSpeech2. Please refer to the origin code if you want to use it for english. 
 
