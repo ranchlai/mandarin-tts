@@ -9,7 +9,7 @@ Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://j
 ### Audio samples
 
 <audio id="audio" controls="" preload="non">
-<source id="wav" src="../output/waveglow_天青色等烟雨,而.wav">
+<source id="wav" src="https://raw.githubusercontent.com/ranchlai/mandarin-tts/master/output/waveglow_%E5%89%8D%E6%96%B9%E8%B7%AF%E5%8F%A3%E8%AF%B7%E5%B7%A6%E8%BD%AC%EF%BC%8C.wav">
 </audio>
 
 ### Markdown
