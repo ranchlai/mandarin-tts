@@ -5,8 +5,12 @@ You can use the [editor on GitHub](https://github.com/ranchlai/mandarin-tts/edit
 Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
 
-![synth](../output/waveglow_前方路口请左转，.wav)
 
+### Audio samples
+
+<audio id="audio" controls="" preload="non">
+<source id="wav" src="../output/waveglow_天青色等烟雨,而.wav">
+</audio>
 
 ### Markdown
 
