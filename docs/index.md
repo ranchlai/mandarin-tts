@@ -1,45 +1,202 @@
-## Welcome to GitHub Pages
-
-You can use the [editor on GitHub](https://github.com/ranchlai/mandarin-tts/edit/master/docs/index.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
 
+### Samples from training loop
 
-### Audio samples
 
-<audio id="audio" controls="" preload="non">
-<source id="wav" src="https://raw.githubusercontent.com/ranchlai/mandarin-tts/master/output/waveglow_%E5%89%8D%E6%96%B9%E8%B7%AF%E5%8F%A3%E8%AF%B7%E5%B7%A6%E8%BD%AC%EF%BC%8C.wav">
-</audio>
+<table>
+   <thead>
+      <tr>
+         <th style="text-align: left">Synthesized</th>
+         <th style="text-align: left">Groudtruth</th>
+      </tr>
+   </thead>
+   <tbody>
+      <tr>
+         <td><audio controls="controls">
+          <source src="./data/step_300000_0_postnet_waveglow.wav" autoplay="">
+        </audio>
+        </td>
+         <td><audio controls="controls">
+          <source src="./data/step_300000_0_ground-truth_waveglow.wav" autoplay="">
+        </audio></td>
+      </tr>
+      <tr>
+         <td><audio controls="controls">
+          <source src="./data/step_300000_1_postnet_waveglow.wav" autoplay="">
+        </audio>
+        </td>
+         <td><audio controls="controls">
+          <source src="./data/step_300000_1_ground-truth_waveglow.wav" autoplay="">
+        </audio></td>
+      </tr>
+     <tr>
+         <td><audio controls="controls">
+          <source src="./data/step_300000_2_postnet_waveglow.wav" autoplay="">
+        </audio>
+        </td>
+         <td><audio controls="controls">
+          <source src="./data/step_300000_2_ground-truth_waveglow.wav" autoplay="">
+        </audio></td>
+      </tr>
+      <tr>
+         <td><audio controls="controls">
+          <source src="./data/step_300000_3_postnet_waveglow.wav" autoplay="">
+        </audio>
+        </td>
+         <td><audio controls="controls">
+          <source src="./data/step_300000_3_ground-truth_waveglow.wav" autoplay="">
+        </audio></td>
+      </tr>
+      <tr>
+         <td><audio controls="controls">
+          <source src="./data/step_300000_4_postnet_waveglow.wav" autoplay="">
+        </audio>
+        </td>
+         <td><audio controls="controls">
+          <source src="./data/step_300000_4_ground-truth_waveglow.wav" autoplay="">
+        </audio></td>
+      </tr>
+      <tr>
+         <td><audio controls="controls">
+          <source src="./data/step_300000_5_postnet_waveglow.wav" autoplay="">
+        </audio>
+        </td>
+         <td><audio controls="controls">
+          <source src="./data/step_300000_5_ground-truth_waveglow.wav" autoplay="">
+        </audio></td>
+      </tr>
+   </tbody>
+</table>
+  
 
-### Markdown
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+### Novel synthsized samples
 
-```markdown
-Syntax highlighted code block
+./novel/hz_0.9_300000_黑化肥发灰会挥发,灰化肥挥发会发黑.wav
+./novel/hz_0.9_300000_红鲤鱼绿鲤鱼与驴.wav
+./novel/hz_0.9_300000_前方路口左转，然后在下一个路口右转.wav
+./novel/hz_0.9_300000_请输入您的卡号.您输入的卡号是六二二六,三八七六,零三四七,六九.wav
+./novel/hz_0.9_300000_如果觉得这个项目好，请手动加个星吧，感谢.wav
+./novel/hz_0.9_300000_天青色等烟雨,而我在等你,炊烟袅袅升起，隔江千万里.wav
+./novel/hz_0.9_300000_我听不清你在说什么，请大声一点.wav
+./novel/hz_0.9_300000_小毛豆你好，很高兴认识你.寒假马上要结束了.我觉得你最近有进步，.wav
+./novel/hz_0.9_300000_有个小孩叫小杜,上街打醋又买布.买了布打了醋,回头看见鹰抓兔.放.wav
 
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/ranchlai/mandarin-tts/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+<table>
+   <thead>
+      <tr>
+         <th style="text-align: left">Text</th>
+         <th style="text-align: left">Normal</th>
+         <th style="text-align: left">Fast</th>
+         <th style="text-align: left">slow</th>
+      </tr>
+   </thead>
+   <tbody>
+      <tr>
+         <td>黑化肥发灰会挥发,灰化肥挥发会发黑
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel/hz_1.0_300000_黑化肥发灰会挥发,灰化肥挥发会发黑.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel/hz_0.9_300000_黑化肥发灰会挥发,灰化肥挥发会发黑.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel/hz_1.1_300000_黑化肥发灰会挥发,灰化肥挥发会发黑.wav" autoplay="">
+        </audio></td>
+      </tr>
+          <tr>
+         <td>红鲤鱼绿鲤鱼与驴
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel/hz_1.0_300000_红鲤鱼绿鲤鱼与驴.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel/hz_0.9_300000_红鲤鱼绿鲤鱼与驴.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel/hz_1.1_300000_红鲤鱼绿鲤鱼与驴.wav" autoplay="">
+        </audio></td>
+      </tr>
+        <tr>
+         <td>前方路口左转，然后在下一个路口右转
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel/hz_1.0_300000_前方路口左转，然后在下一个路口右转.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel/hz_0.9_300000_前方路口左转，然后在下一个路口右转.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel/hz_1.1_300000_前方路口左转，然后在下一个路口右转.wav" autoplay="">
+        </audio></td>
+      </tr>
+         <tr>
+         <td>请输入您的卡号.您输入的卡号是六二二六,三八七六,零三四七,六九
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel/hz_1.0_300000_请输入您的卡号.您输入的卡号是六二二六,三八七六,零三四七,六九.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel/hz_0.9_300000_请输入您的卡号.您输入的卡号是六二二六,三八七六,零三四七,六九.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel/hz_1.1_300000_请输入您的卡号.您输入的卡号是六二二六,三八七六,零三四七,六九.wav" autoplay="">
+        </audio></td>
+      </tr>
+         <tr>
+         <td>天青色等烟雨,而我在等你,炊烟袅袅升起，隔江千万里
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel/hz_1.0_300000_天青色等烟雨,而我在等你,炊烟袅袅升起，隔江千万里.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel/hz_0.9_300000_天青色等烟雨,而我在等你,炊烟袅袅升起，隔江千万里.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel/hz_1.1_300000_天青色等烟雨,而我在等你,炊烟袅袅升起，隔江千万里.wav" autoplay="">
+        </audio></td>
+      </tr>
+         <tr>
+         <td>我听不清你在说什么，请大声一点
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel/hz_1.0_300000_我听不清你在说什么，请大声一点.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel/hz_0.9_300000_我听不清你在说什么，请大声一点.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel/hz_1.1_300000_我听不清你在说什么，请大声一点.wav" autoplay="">
+        </audio></td>
+      </tr>
+         <tr>
+         <td>小毛豆你好，很高兴认识你.寒假马上要结束了.我觉得你最近有进步，
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel/hz_1.0_300000_小毛豆你好，很高兴认识你.寒假马上要结束了.我觉得你最近有进步，.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel/hz_0.9_300000_小毛豆你好，很高兴认识你.寒假马上要结束了.我觉得你最近有进步，.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel/hz_1.1_300000_小毛豆你好，很高兴认识你.寒假马上要结束了.我觉得你最近有进步，.wav" autoplay="">
+        </audio></td>
+      </tr>
+                <td>有个小孩叫小杜,上街打醋又买布.买了布打了醋,回头看见鹰抓兔.放
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel/hz_1.0_300000_有个小孩叫小杜,上街打醋又买布.买了布打了醋,回头看见鹰抓兔.放.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel/hz_0.9_300000_有个小孩叫小杜,上街打醋又买布.买了布打了醋,回头看见鹰抓兔.放.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel/hz_1.1_300000_有个小孩叫小杜,上街打醋又买布.买了布打了醋,回头看见鹰抓兔.放.wav" autoplay="">
+        </audio></td>
+      </tr>
+      
+      
+   </tbody>
+</table>
+  
