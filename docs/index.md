@@ -4,6 +4,10 @@ You can use the [editor on GitHub](https://github.com/ranchlai/mandarin-tts/edit
 
 Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
+
+![synth](../output/waveglow_前方路口请左转，.wav)
+
+
 ### Markdown
 
 Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
