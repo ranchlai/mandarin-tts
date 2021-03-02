@@ -3,7 +3,7 @@
 This is a part-time on-going work. 建议先加星收藏，有时间我会随时更新。
 
 
-This is a modification and adpation of fastspeech 2 to mandrin. The code was  originally  implemented by https://github.com/ming024/FastSpeech2. Please refer to the origin code if you want to use it for english. 
+This is a modification and adpation of fastspeech 2 to mandrin. The code was  originally  implemented by <a href="https://github.com/ming024/FastSpeech2">ming024</a>. Please refer to the origin code if you want to use it for english. 
 
 <b> Many modificaitons to the origin implmentation, including</b>: 
 
