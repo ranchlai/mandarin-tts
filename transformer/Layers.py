@@ -72,8 +72,8 @@ class PostNet(nn.Module):
     def __init__(self,
                  n_mel_channels=80,
                  postnet_embedding_dim=512,
-                 postnet_kernel_size=5,
-                 postnet_n_convolutions=5):
+                 postnet_kernel_size=7,
+                 postnet_n_convolutions=7):
 
         super(PostNet, self).__init__()
         self.convolutions = nn.ModuleList()
@@ -88,7 +88,7 @@ class PostNet(nn.Module):
                          dilation=1,
                          w_init_gain='tanh'),
 
-                nn.BatchNorm1d(postnet_embedding_dim))
+                nn.InstanceNorm1d(postnet_embedding_dim))
         )
 
         for i in range(1, postnet_n_convolutions - 1):
@@ -102,7 +102,7 @@ class PostNet(nn.Module):
                              dilation=1,
                              w_init_gain='tanh'),
 
-                    nn.BatchNorm1d(postnet_embedding_dim))
+                    nn.InstanceNorm1d(postnet_embedding_dim))
             )
 
         self.convolutions.append(
@@ -115,7 +115,7 @@ class PostNet(nn.Module):
                          dilation=1,
                          w_init_gain='linear'),
 
-                nn.BatchNorm1d(n_mel_channels))
+                nn.InstanceNorm1d(n_mel_channels))
         )
 
     def forward(self, x):
@@ -123,8 +123,8 @@ class PostNet(nn.Module):
 
         for i in range(len(self.convolutions) - 1):
             x = F.dropout(torch.tanh(
-                self.convolutions[i](x)), 0.5, self.training)
-        x = F.dropout(self.convolutions[-1](x), 0.5, self.training)
+                self.convolutions[i](x)), 0.1, self.training)
+        x = F.dropout(self.convolutions[-1](x), 0.1, self.training)
 
         x = x.contiguous().transpose(1, 2)
         return x
