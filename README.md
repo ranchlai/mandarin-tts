@@ -66,6 +66,8 @@ More details in <a href="https://ranchlai.github.io/mandarin-tts/">this page</a>
 
 Audio samples can be found in <a href="https://ranchlai.github.io/mandarin-tts/">this page</a>
 
+![page](./docs/page.png)
+
 
 ## Training
 

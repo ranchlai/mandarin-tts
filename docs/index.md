@@ -98,12 +98,20 @@ To generate audio samples, first you need to down load the checkpoint from <a hr
 
 Then the audio samples are genreated by the following command:
 ``` 
-./hz_synth.sh 1.0 300000
-./hz_synth.sh 0.9 300000 
-./hz_synth.sh 1.1 300000 
+./scripts/hz_synth.sh 1.0 300000
+./scripts/hz_synth.sh 0.9 300000 
+./scripts/hz_synth.sh 1.1 300000 
 ```
 
-You can alter text in input.txt. Some hints: 
+You can also use pure pinyin + unet model, as follows:
+``` 
+./scripts/py_synth.sh 1.0 300000 
+./scripts/py_synth.sh 0.9 300000 
+./scripts/py_synth.sh 1.1 300000 
+```
+
+
+For other text inputs, you can alter text in input.txt. Some hints: 
 - 只需输入中文，因为代码中使用了pypinyin进行转换，转换前先分词。 
 - 不同句子用句号分开，可放在同一行，最后同一行的句子会合并成一个语音。如果需要不同语音，放在不同行即可。
 - 需要停顿的地方用逗号。
