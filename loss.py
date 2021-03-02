@@ -32,7 +32,7 @@ class FastSpeech2Loss(nn.Module):
             mel = mel.masked_select(mel_mask.unsqueeze(-1))
             mel_postnet = mel_postnet.masked_select(mel_mask.unsqueeze(-1))
             mel_target = mel_target.masked_select(mel_mask.unsqueeze(-1))
-            mel_loss = self.mse_loss(mel, mel_target)
+            mel_loss = self.mse_loss(mel, mel_target)*0.1
             mel_postnet_loss = self.mse_loss(mel_postnet, mel_target)
 
             d_loss = self.mae_loss(log_d_predicted, log_d_target)*0.01

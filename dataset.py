@@ -67,7 +67,7 @@ class Dataset(Dataset):
             hz_array = np.array([self.hz2idx[c] for c in self.hz_text[idx].split()])
             
         else:
-            hzarray = None
+            hz_array = None
         
         mel_path = os.path.join(
             hp.preprocessed_path, "mel", "{}-mel-{}.npy".format(hp.dataset, basename))

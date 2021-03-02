@@ -3,7 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from transformer.Models import Encoder, Decoder
-from transformer.Layers import PostNet
+#from transformer.Layers import PostNet
+from unet import UNet
 from modules import VarianceAdaptor
 from utils import get_mask_from_lengths
 import hparams as hp
@@ -25,7 +26,7 @@ class FastSpeech2(nn.Module):
 
         self.use_postnet = use_postnet
         if self.use_postnet:
-            self.postnet = PostNet()
+            self.postnet = UNet(scale=8)
 
     def forward(self, src_seq, src_len, hz_seq = None,mel_len=None, d_target=None,  max_src_len=None, max_mel_len=None, d_control=1.0, p_control=1.0, e_control=1.0):
         src_mask = get_mask_from_lengths(src_len, max_src_len)
@@ -43,7 +44,8 @@ class FastSpeech2(nn.Module):
         decoder_output = self.decoder(variance_adaptor_output, mel_mask)
         mel_output = self.mel_linear(decoder_output)
         if self.use_postnet:
-            mel_output_postnet = self.postnet(mel_output) + mel_output
+            unet_out = self.postnet(torch.unsqueeze(mel_output,1))
+            mel_output_postnet = unet_out[:,0,:,:]+ mel_output
         else:
             mel_output_postnet = mel_output
 

@@ -19,9 +19,12 @@ import hparams as hp
 import utils
 import audio as Audio
 
+from  perf_logger import PerfLogger
+logger = PerfLogger(prefix='tts')
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--restore_step', type=int, default=0)
-args = parser.parse_args([])
+args = parser.parse_args()
 #def main(args):
 #torch.manual_seed(0)
 # Get dataset
@@ -136,6 +139,9 @@ for epoch in range(0,hp.epochs):
                 
             mel_target = torch.from_numpy(
                 data_of_batch["mel_target"]).float().to(device)
+            
+            #mel_target -= hp.mel_mean
+            
             D = torch.from_numpy(data_of_batch["D"]).long().to(device)
            
             log_D = torch.from_numpy(
@@ -168,10 +174,10 @@ for epoch in range(0,hp.epochs):
  
             mel_loss, mel_postnet_loss, d_loss = Loss(
                 log_duration_output, log_D,   
-                mel_output, mel_postnet_output, mel_target, ~src_mask, ~mel_mask)
+                mel_output, mel_postnet_output, mel_target-hp.mel_mean, ~src_mask, ~mel_mask)
             
             
-            total_loss =  mel_postnet_loss + d_loss+mel_loss
+            total_loss =  mel_postnet_loss + d_loss + mel_loss
             
             # Logger
             t_l = (total_loss.item() + K*t_l)/(1+K)
@@ -183,6 +189,7 @@ for epoch in range(0,hp.epochs):
             lr =  optimizer.param_groups[0]['lr'] 
             msg = 'total:{:.3},mel:{:.3},mel_postnet:{:.3},duration:{:.3},{:.3}'.format(t_l,m_l,m_p_l,d_l,lr)
             bar.set_description_str(msg)
+            logger.log_str(msg,False)
            
             
             # Backward
@@ -210,10 +217,17 @@ for epoch in range(0,hp.epochs):
 
                 str1 = "Epoch [{}/{}], Step [{}/{}]:".format(
                     epoch+1, hp.epochs, current_step, total_step)
+                logger.log_str(str1,True)
+                
                 str2 = "Total Loss: {:.4f}, Mel Loss: {:.4f}, Mel PostNet Loss: {:.4f}, Duration Loss: {:.4f}".format(
                     t_l, m_l, m_p_l, d_l)
+                logger.log_str(str2,True)
+                
                 str3 = "Time Used: {:.3f}s, Estimated Time Remaining: {:.3f}s.".format(
                     (Now-Start), (total_step-current_step)*np.mean(Time))
+                
+                logger.log_str(str3,True)
+                
                 
                 train_logger.add_scalar(
                     'Loss/total_loss', t_l, current_step)
@@ -227,7 +241,7 @@ for epoch in range(0,hp.epochs):
             if current_step % hp.save_step == 0:
                 torch.save({'model': model.state_dict(), 'optimizer': optimizer.state_dict(
                 )}, os.path.join(checkpoint_path, 'checkpoint_{}.pth.tar'.format(current_step)))
-                print("save model at step {} ...".format(current_step))
+                logger.log_str("save model at step {} ...".format(current_step))
 
             if current_step % hp.synth_step == 0:
                 length = mel_len[0].item()
@@ -260,13 +274,13 @@ for epoch in range(0,hp.epochs):
                 elif hp.vocoder == 'waveglow':
                    # utils.waveglow_infer(mel_torch, waveglow, os.path.join(
                        # hp.synth_path, 'step_{}_{}.wav'.format(current_step, hp.vocoder)))
-                    utils.waveglow_infer(mel_postnet_torch, waveglow, os.path.join(
+                    utils.waveglow_infer(mel_postnet_torch+hp.mel_mean, waveglow, os.path.join(
                         hp.synth_path, 'step_{}_postnet_{}.wav'.format(current_step, hp.vocoder)))
                     utils.waveglow_infer(mel_target_torch, waveglow, os.path.join(
                         hp.synth_path, 'step_{}_ground-truth_{}.wav'.format(current_step, hp.vocoder)))
 
 
-                utils.plot_data([mel_postnet.numpy(), mel_target.numpy()],
+                utils.plot_data([mel_postnet.numpy()+hp.mel_mean, mel_target.numpy()],
                                 ['Synthetized Spectrogram', 'Ground-Truth Spectrogram'], filename=os.path.join(synth_path, 'step_{}.png'.format(current_step)))
 
           
@@ -280,11 +294,12 @@ for epoch in range(0,hp.epochs):
 
     if t_l >= best_t_l*0.99 and (epoch+1) % 2==0:
         optimizer.param_groups[0]['lr'] *= 0.98
-        print('train loss not decreasing, using new lr',optimizer.param_groups[0]['lr'])
+        logger.log_str('train loss not decreasing, using new lr',optimizer.param_groups[0]['lr'])
+        
         
     if t_l < best_t_l:
         best_t_l = t_l
-        print('best training loss found:',best_t_l)
+        logger.log_str('best training loss found:',best_t_l)
         
         
     with torch.no_grad():
@@ -300,10 +315,10 @@ for epoch in range(0,hp.epochs):
             best_val_loss = t_l
             best_name =  os.path.join(checkpoint_path, 'val_best_{}_{:.3}.pth.tar'.format(current_step,best_val_loss))
             torch.save( model.state_dict(),best_name)
-            print('saving best model to ',best_name)
+            logger.log_str('saving best model to ',best_name)
 
         else:
-            print('model not improving,current loss {},best loss {}'.format(t_l,best_val_loss))
+            logger.log_str('model not improving,current loss {},best loss {}'.format(t_l,best_val_loss))
         #else:
 
 

@@ -4,19 +4,17 @@ import numpy as np
 import hparams as hp
 import torch
 import os
+import copy
 
 #sent = '知情人士称，特朗普已表示不会?参加:当选,总统拜登的就职典礼。'
 sp_tokens = '。？！?!.;；'
-if hp.with_hanzi:
-    with open(os.path.join(hp.preprocessed_path,'vocab_hanzi.txt')) as F:
-        cn_vocab = F.read().split('\n')
-else:
-    cn_vocab = None
-if hp.with_hanzi:
-    cn2idx = dict([(c,i) for i,c in enumerate(cn_vocab)])
-    idx2cn = dict([(i,c) for i,c in enumerate(cn_vocab)])
-    
-import copy
+#if hp.with_hanzi:
+with open(os.path.join(hp.preprocessed_path,'vocab_hanzi.txt')) as F:
+    cn_vocab = F.read().split('\n')
+
+cn2idx = dict([(c,i) for i,c in enumerate(cn_vocab)])
+idx2cn = dict([(i,c) for i,c in enumerate(cn_vocab)])
+
 def split2sent(text):
     new_sub = [text]
     

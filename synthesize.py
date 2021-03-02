@@ -62,7 +62,7 @@ def synthesize(model, waveglow, py_text_seq,  cn_text_seq, duration_control=1.0,
     mel_postnet = mel_postnet[0].cpu().transpose(0, 1).detach()
     dst_name = os.path.join(
         '/dev/shm/', '{}-out.wav'.format(prefix))
-    utils.waveglow_infer(mel_postnet_torch, waveglow, dst_name)
+    utils.waveglow_infer(mel_postnet_torch+hp.mel_mean, waveglow, dst_name)
     return dst_name
 
 
@@ -85,12 +85,15 @@ if __name__=='__main__':
     args = parser.parse_args()
     
     if args.with_hanzi:
+        hp.with_hanzi = True
         with open(os.path.join(hp.preprocessed_path,'vocab_hanzi.txt')) as F:
             cn_vocab = F.read().split('\n')
             hz_vocab_size = len(cn_vocab)
             hz2idx = dict([(c,i) for i,c in enumerate(cn_vocab)])
+            
     else:
         hz_vocab_size = None
+        hp.with_hanzi = False
 
     with open(os.path.join(hp.preprocessed_path,'vocab_pinyin.txt')) as F:
             py_vocab = F.read().split('\n')
@@ -110,8 +113,8 @@ if __name__=='__main__':
         
 
 
-    sr = 22050
-    mute_len = int(22050*0.15)
+    sr = hp.sampling_rate
+    mute_len = int(sr*0.15)
     print(args)
     model = get_FastSpeech2(args.model_file,args.with_hanzi).to(device)
     hp.vocoder = 'waveglow' #force to use waveglow
@@ -160,10 +163,14 @@ if __name__=='__main__':
         s = np.concatenate(s)
         s = s/np.max(np.abs(s))*0.99
         fn = '/dev/shm/{}_{}_22k.wav'.format(hp.vocoder,chapter[:8])
-
+        step = args.model_file.split('_')[-1].split('.pth')[0]
        # print(fn)
-        wavfile.write(fn,22050,(s*32767).astype('int16'))
-        final_fn = os.path.join(args.output_dir,'{}_{}.wav'.format(hp.vocoder,chapter[:8]))
+        wavfile.write(fn,hp.sampling_rate,(s*32767).astype('int16'))
+        if args.with_hanzi:
+            final_fn = os.path.join(args.output_dir,'{}_{}_{}_{}.wav'.format('hz',args.duration_control,step,chapter[:32]))
+        else:   
+            final_fn = os.path.join(args.output_dir,'{}_{}_{}_{}.wav'.format('py',args.duration_control,step,chapter[:32]))
+            
         cmd = 'ffmpeg -i {} -ac {} -ar 48000 -strict -2 {} -y'.format(fn,args.channel,final_fn)
         os.system(cmd)
         print('audio written to {}'.format(final_fn))
