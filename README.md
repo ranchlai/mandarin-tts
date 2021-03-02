@@ -7,10 +7,10 @@ This is a modification and adpation of fastspeech 2 to mandrin. The code was  or
 
 <b> Many modificaitons to the origin implmentation, including</b>: 
 
-1. Use UNet instead postnet (1d conv). Unet is good at recovering spect details and much easier to train than original postnet
+1. Use UNet instead of postnet (1d conv). Unet is good at recovering spect details and much easier to train than original postnet
 2. Added hanzi(汉字，chinese character) embedding. It's harder for human being to read pinyin, but easier to read chinese character. Also this makes it more end-to-end. 
-3. Removed pitch and energy embedding, and also the corresponding prediction network. This makes its much easier to train, especially for my gtx1060 card. I will try using them back if I have time (and hardware resources)
-5. Use only waveglow in synth, as it's much better tahn melgan and griffin-lim.
+3. Removed pitch and energy embedding, and also the corresponding prediction network. This makes its much easier to train, especially for my gtx1060 card. I will try bringing them back if I have time (and hardware resources)
+5. Use only waveglow in synth, as it's much better than melgan and griffin-lim.
 6. subtracted the mel-mean for (seems much) easier prediction. 
 7. Changed the loss weight to  mel_postnet_loss + d_loss*0.01 + mel_loss*0.1
 8. Used linear duration instead of log, and subtracted the duration_mean in training.
@@ -22,7 +22,7 @@ This is a modification and adpation of fastspeech 2 to mandrin. The code was  or
 
 ## Dependencies
 
-All experiments were done under ubuntu16.04 + python3.7 + torch 1.7.1. Other env probably work too.
+All experiments were done under ubuntu16.04 + python3.7 + torch 1.7.1. Other env probably works too.
 
 - torch for training and inference
 - librosa and ffmpeg for basic audio processing
@@ -45,7 +45,7 @@ First clone the project and install the dependencies.
 
 
 To generate audio samples, first you need to download the checkpoint from <a href="https://drive.google.com/file/d/11mBus5gn69_KwvNec9Zy9jjTs3LgHdx3/view?usp=sharing">google drive</a> and untar it to ```mandarin_tts/```
-
+上不了google可以用这个<a href="https://pan.baidu.com/s/1wwRYos4TuDZHjtKuEaRbnA ">link</a>,```5rur```
 
 - run the pinyin+hanzi model:
 
@@ -94,7 +94,7 @@ Best practice: copy the ./data folder to /dev/shm to avoid harddisk reading (if 
 
 
 
-Some spectrograms at step 300000:
+<b> The following are some spectrograms synthesized at step 300000 </b>
 
 ![spect](./docs/data/step_300000_0.png)
 ![spect](./docs/data/step_300000_2.png)
@@ -105,6 +105,7 @@ Some spectrograms at step 300000:
 
 
 ## TODO
+- Clean the training code
 - Add gan for better spectrogram prediction
 # References
 - [FastSpeech 2: Fast and High-Quality End-to-End Text to Speech](https://arxiv.org/abs/2006.04558), Y. Ren, *et al*.
