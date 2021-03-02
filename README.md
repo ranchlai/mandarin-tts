@@ -1,5 +1,6 @@
 # Fastspeech 2u:  Chinese mandarin text to speech based on FastSpeech2 and Unet
 
+This is a part-time on-going work. 建议先加星收藏，有时间我会随时更新。
 
 
 This is a modification and adpation of fastspeech 2 to mandrin. The code was  originally  implemented by https://github.com/ming024/FastSpeech2. Please refer to the origin code if you want to use it for english. 
@@ -19,14 +20,29 @@ This is a modification and adpation of fastspeech 2 to mandrin. The code was  or
 ![arch](./docs/arch.png)
 
 
+## Dependencies
+
+All experiments were done under ubuntu16.04 + python3.7 + torch 1.7.1. Other env probably work too.
+
+- torch for training and inference
+- librosa and ffmpeg for basic audio processing
+- pypinyin用于转换汉字为拼音
+- jieba 用于分词
+- perf_logger用于写训练日志
+
+To install all dependencies, run:
+
+```
+sudo apt-get install ffmpeg
+pip3 install -r requirements.txt
+```
+
+
 ## Synthesis (inference)
 
 
-First clone the project and install the dependencies
+First clone the project and install the dependencies. 
 
-```
-pip3 install -r requirements.txt
-```
 
 To generate audio samples, first you need to download the checkpoint from <a href="https://drive.google.com/file/d/11mBus5gn69_KwvNec9Zy9jjTs3LgHdx3/view?usp=sharing">google drive</a> and untar it to ```mandarin_tts/```
 
@@ -53,29 +69,23 @@ Audio samples can be found in <a href="https://ranchlai.github.io/mandarin-tts/"
 
 ## Training
 
+(under testing)
 
-
-Currently we use baker dataset, which can be downloaded from https://www.data-baker.com/open_source.html. 
-
-First download it from baker. 
+Currently we use baker dataset, which can be downloaded from <a href="https://www.data-baker.com/open_source.html">baker</a>
 
 You have to comply with the data liscense before using the data. 
-
-
 
 
 I have processed the data for this experiment. You can also try 
 ```
 python3 preprocess_pinyin.py 
 python3 preprocess_hanzi.py 
-
 ```
 to generate required aligments, mels, vocab for pinyin and hanzi for training. Everythin should be ready under the directory './data/'(you can change the directory in hparams.py) before training. 
 
 
 ```
 python3 train.py
-
 ```
 you can monitor the log in '/home/\<user\>/.perf_logger/'
 
@@ -84,7 +94,7 @@ Best practice: copy the ./data folder to /dev/shm to avoid harddisk reading (if 
 
 
 
-Some spectrograms at step 300000
+Some spectrograms at step 300000:
 
 ![spect](./docs/data/step_300000_0.png)
 ![spect](./docs/data/step_300000_2.png)

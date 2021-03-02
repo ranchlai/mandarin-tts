@@ -1,10 +1,14 @@
 librosa == 0.7.2
 numpy
 torch
+torchvision
 scipy
 matplotlib
+backports.lzma
 tensorboard
 ipdb
+pypinyin
+jieba
 perf-logger
-
+numba==0.48
 

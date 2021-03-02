@@ -12,7 +12,6 @@ import audio as Audio
 import numpy as np
 from scipy.io import wavfile
 import librosa
-from hz_utils import *
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #hp.with_hanzi = False
 
@@ -140,17 +139,17 @@ if __name__=='__main__':
             print('skipping ',chapter)
             continue
             
-        sentences,_ = split2sent(chapter)
+        sentences,_ = utils.split2sent(chapter)
         audio_names = []
         for k,cn_sentence in enumerate(sentences):
             if len(cn_sentence)==0:
                 continue
 
             print('processing',cn_sentence)
-            py_sentence = convert(cn_sentence)
+            py_sentence = utils.convert(cn_sentence)
             py_sentence_seq = preprocess(py_sentence)
             if args.with_hanzi:
-                cn_sentence_seq = convert_cn(cn_sentence)
+                cn_sentence_seq = utils.convert_cn(cn_sentence)
                 cn_sentence_seq = torch.from_numpy(cn_sentence_seq).long().to(device)
             else:
                 cn_sentence_seq = None

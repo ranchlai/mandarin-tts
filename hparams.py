@@ -1,1 +1,1 @@
-hparams_hanzi.py
+./config/hparams_hanzi.py
