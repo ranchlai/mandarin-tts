@@ -1,5 +1,12 @@
 
 
+
+## Audio samples
+
+Below are the audio samples from step 300k, pinyin + hanzi + unet(as postnet). 
+
+It may take some time to load all audios in browser. 
+
 ### Samples from training loop
 
 
@@ -72,6 +79,37 @@
 
 ### Novel synthsized samples
 
+#### Input text
+1. 黑化肥发灰会挥发,灰化肥挥发会发黑
+2. 红鲤鱼绿鲤鱼与驴
+3. 前方路口左转，然后在下一个路口右转
+4. 请输入您的卡号.您输入的卡号是六二二六,三八七六,零三四七,六九一五
+5. 天青色等烟雨,而我在等你,炊烟袅袅升起，隔江千万里
+6. 我听不清你在说什么，请大声一点
+7. 如果觉得这个项目好，请手动加个星吧，感谢
+8. 小毛豆你好，很高兴认识你.寒假马上要结束了.我觉得你最近有进步，继续加油.晚上要早点睡觉,因为明天要开学了.
+9. 有个小孩叫小杜,上街打醋又买布.买了布打了醋,回头看见鹰抓兔.放下布搁下醋,上前去追鹰和兔.飞了鹰跑了兔,洒了醋湿了布.
+
+
+#### Audio samples
+
+To generate audio samples, first you need to down load the checkpoint from <a href="https://drive.google.com/file/d/11mBus5gn69_KwvNec9Zy9jjTs3LgHdx3/view?usp=sharing">google drive</a> an untar it to mandarin_tts/
+
+
+Then the audio samples are genreated by the following command:
+``` 
+./hz_synth.sh 1.0 300000
+./hz_synth.sh 0.9 300000 
+./hz_synth.sh 1.1 300000 
+```
+
+You can alter text in input.txt. Some hints: 
+- 只需输入中文，因为代码中使用了pypinyin进行转换，转换前先分词。 
+- 不同句子用句号分开，可放在同一行，最后同一行的句子会合并成一个语音。如果需要不同语音，放在不同行即可。
+- 需要停顿的地方用逗号。
+- 算法不区分问号和叹号，当成句号处理。同样，不区分顿号，当成逗号，token统一设置为sp1. 
+
+
 <table>
    <thead>
       <tr>
@@ -83,7 +121,7 @@
    </thead>
    <tbody>
       <tr>
-         <td>黑化肥发灰会挥发,灰化肥挥发会发黑
+         <td>1
         </td>
          <td><audio controls="controls">
           <source src="./novel/hz_1.0_300000_黑化肥发灰会挥发,灰化肥挥发会发黑.wav" autoplay="">
@@ -96,7 +134,7 @@
         </audio></td>
       </tr>
           <tr>
-         <td>红鲤鱼绿鲤鱼与驴
+         <td>2
         </td>
          <td><audio controls="controls">
           <source src="./novel/hz_1.0_300000_红鲤鱼绿鲤鱼与驴.wav" autoplay="">
@@ -109,7 +147,7 @@
         </audio></td>
       </tr>
         <tr>
-         <td>前方路口左转，然后在下一个路口右转
+         <td>3
         </td>
          <td><audio controls="controls">
           <source src="./novel/hz_1.0_300000_前方路口左转，然后在下一个路口右转.wav" autoplay="">
@@ -122,7 +160,7 @@
         </audio></td>
       </tr>
          <tr>
-         <td>请输入您的卡号.您输入的卡号是六二二六,三八七六,零三四七,六九
+         <td>4
         </td>
          <td><audio controls="controls">
           <source src="./novel/hz_1.0_300000_请输入您的卡号.您输入的卡号是六二二六,三八七六,零三四七,六九.wav" autoplay="">
@@ -135,7 +173,7 @@
         </audio></td>
       </tr>
          <tr>
-         <td>天青色等烟雨,而我在等你,炊烟袅袅升起，隔江千万里
+         <td>5
         </td>
          <td><audio controls="controls">
           <source src="./novel/hz_1.0_300000_天青色等烟雨,而我在等你,炊烟袅袅升起，隔江千万里.wav" autoplay="">
@@ -148,7 +186,7 @@
         </audio></td>
       </tr>
          <tr>
-         <td>我听不清你在说什么，请大声一点
+         <td>6
         </td>
          <td><audio controls="controls">
           <source src="./novel/hz_1.0_300000_我听不清你在说什么，请大声一点.wav" autoplay="">
@@ -161,7 +199,20 @@
         </audio></td>
       </tr>
          <tr>
-         <td>小毛豆你好，很高兴认识你.寒假马上要结束了.我觉得你最近有进步，
+         <td>7
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel/hz_1.0_300000_如果觉得这个项目好，请手动加个星吧，感谢.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel/hz_0.9_300000_如果觉得这个项目好，请手动加个星吧，感谢.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel/hz_1.1_300000_如果觉得这个项目好，请手动加个星吧，感谢.wav" autoplay="">
+        </audio></td>
+      </tr>
+       <tr>
+         <td>8
         </td>
          <td><audio controls="controls">
           <source src="./novel/hz_1.0_300000_小毛豆你好，很高兴认识你.寒假马上要结束了.我觉得你最近有进步，.wav" autoplay="">
@@ -174,7 +225,7 @@
         </audio></td>
       </tr>
     <tr>
-                <td>有个小孩叫小杜,上街打醋又买布.买了布打了醋,回头看见鹰抓兔.放
+      <td>9
         </td>
          <td><audio controls="controls">
           <source src="./novel/hz_1.0_300000_有个小孩叫小杜,上街打醋又买布.买了布打了醋,回头看见鹰抓兔.放.wav" autoplay="">
