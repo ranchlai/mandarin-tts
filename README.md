@@ -1,9 +1,9 @@
-# Chinese mandarin text to speech based on FastSpeech2 and Unet
+# Chinese mandarin text to speech based on Fastspeech2 and Unet
 
 This is a part-time on-going work. 建议先加星收藏，有时间我会随时更新。
 
-This is a modification and adpation of fastspeech 2 to mandrin(普通话）. 
-<b> Many modificaitons to the origin paper, including</b>: 
+This is a modification and adpation of fastspeech2 to mandrin(普通话）. 
+<b> Many modifications to the origin paper, including</b>: 
 
 1. Use UNet instead of postnet (1d conv). Unet is good at recovering spect details and much easier to train than original postnet
 2. Added hanzi(汉字，chinese character) embedding. It's harder for human being to read pinyin, but easier to read chinese character. Also this makes it more end-to-end. 
