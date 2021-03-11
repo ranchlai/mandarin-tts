@@ -1,27 +1,5 @@
 import torch
-import torch.optim as optim
-from torch.autograd import Variable
 import torch.nn as nn
-import numpy as np
-cuda = torch.cuda.is_available()
-import os
-#from unet.resUnet import UNet
-import torch
-from torch.optim import lr_scheduler
-import torchvision as tv
-import torch.optim as optim
-from torch.autograd import Variable
-import torch.nn as nn
-import numpy as np
-cuda = torch.cuda.is_available()
-import os
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from pdb import set_trace
-import matplotlib.pyplot as plt
-from scipy.fftpack import dct
-
 
 class double_res_conv(nn.Module):
     '''(conv => BN => ReLU) * 2'''

@@ -1,7 +1,6 @@
 librosa == 0.7.2
 numpy
 torch
-torchvision
 scipy
 matplotlib
 backports.lzma

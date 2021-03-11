@@ -7,10 +7,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-import matplotlib
-import matplotlib
-matplotlib.use("Agg")
-from ipdb import set_trace
+
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -185,7 +182,6 @@ def pad_2D(inputs, maxlen=None):
         output = np.stack([pad(x, max_len) for x in inputs])
 
     return output
-from ipdb import set_trace
 
 def pad(input_ele, mel_max_length=None):
     if mel_max_length:
