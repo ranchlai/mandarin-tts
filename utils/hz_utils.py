@@ -11,7 +11,9 @@ sp_tokens = '。？！?!.;；'
 #if hp.with_hanzi:
 with open(os.path.join(hp.preprocessed_path,'vocab_hanzi.txt')) as F:
     cn_vocab = F.read().split('\n')
-
+with open(os.path.join(hp.preprocessed_path,'vocab_pinyin.txt')) as F:
+    py_vocab = F.read().split('\n')
+in_py_voab = dict([(p,True) for p in py_vocab])
 cn2idx = dict([(c,i) for i,c in enumerate(cn_vocab)])
 idx2cn = dict([(i,c) for i,c in enumerate(cn_vocab)])
 
@@ -72,7 +74,7 @@ def correct_tone5(pys):
                 pys[i] += '5'
     return pys
 
-def convert(sent):
+def convert_to_py(sent):
     pys = []
     for words in list(jieba.cut(sent)):
         py = pypinyin.pinyin(words,pypinyin.TONE3)
@@ -95,6 +97,25 @@ def convert_cn(cn_sentence):
     cn_sentence = list(cn_sentence)
     cn_sentence = ['sp1' if c in ',，：:、' else c for c in cn_sentence]
     cn_sentence = ['sil']+cn_sentence+['sil']
-    cn_text = np.array([[cn2idx[c] for c in cn_sentence]])
+    cn_array = np.array([[cn2idx[c] for c in cn_sentence]])
    
-    return cn_text
+    return cn_array,cn_sentence
+
+def convert_er2(py,cn):
+    py2hz = dict([(p,h) for p,h in zip(py.split(),cn)])
+    py_list = py.split()
+    for i,p in enumerate(py_list):
+        if p == 'er2' and py2hz[p]=='儿' and i > 1 and \
+        len(py_list[i-1])>2 and  py_list[i-1][-1] in '1234':
+            py_er =  py_list[i-1][:-1]+'r'+ py_list[i-1][-1]
+            if in_py_voab.get(py_er,False):#must in vocab
+                py_list[i-1] = py_er
+                py_list[i] = 'r'
+                
+                
+                
+            
+    py = ' '.join(py_list)
+    return py
+
+

@@ -106,7 +106,7 @@ class Dataset(Dataset):
        # energies = [batch[ind]["energy"] for ind in cut_list]
         for text, D, id_ in zip(texts, Ds, ids):
             if len(text) != len(D):
-                print(text, text.shape, D, D.shape, id_)
+                print('error:',text, text.shape, D, D.shape, id_)
         length_text = np.array(list())
         for text in texts:
             length_text = np.append(length_text, text.shape[0])

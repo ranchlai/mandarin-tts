@@ -79,9 +79,9 @@ class Encoder(nn.Module):
         try:
             if hz_seq is not None:
                 hz_emb = self.cn_word_emb(hz_seq)
-                z = torch.zeros((hz_emb.shape[0],hz_emb.shape[1],self.d_word_vec-hp.hz_emb_size)).to(hz_emb.device)
-                #set_trace()
-                hz_emb = torch.cat([z,hz_emb],2)
+                #z = torch.zeros((hz_emb.shape[0],hz_emb.shape[1],self.d_word_vec-hp.hz_emb_size)).to(hz_emb.device)
+                ##set_trace()
+               # hz_emb = torch.cat([z,hz_emb],2)
             else:
                 hz_emb = 0
             if not self.training and src_seq.shape[1] > hp.max_seq_len:

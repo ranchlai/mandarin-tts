@@ -10,7 +10,7 @@ import re
 from fastspeech2 import FastSpeech2
 from loss import FastSpeech2Loss
 from dataset import Dataset
-from text import text_to_sequence, sequence_to_text
+#from text import text_to_sequence, sequence_to_text
 import hparams as hp
 import utils
 import audio as Audio
@@ -36,7 +36,7 @@ def evaluate(model, step, vocoder=None):
         
     # Get dataset
     if hp.with_hanzi:
-        dataset = Dataset(filename_py="val.txt",vocab_file_py = 'vocab_pinyin.txt',
+        dataset = Dataset(filename_py="val_pinyin.txt",vocab_file_py = 'vocab_pinyin.txt',
                      filename_hz = "val_hanzi.txt",
                      vocab_file_hz = 'vocab_hanzi.txt')
         py_vocab_size = len(dataset.py_vocab)
@@ -44,7 +44,7 @@ def evaluate(model, step, vocoder=None):
 
 
     else:
-        dataset = Dataset(filename_py="val.txt",vocab_file_py = 'vocab_pinyin.txt',
+        dataset = Dataset(filename_py="val_pinyin.txt",vocab_file_py = 'vocab_pinyin.txt',
                      filename_hz = None,
                      vocab_file_hz = None)
         py_vocab_size = len(dataset.py_vocab)

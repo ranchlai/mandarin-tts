@@ -19,8 +19,6 @@ import hparams as hp
 import utils
 import audio as Audio
 
-from  perf_logger import PerfLogger
-logger = PerfLogger(prefix='tts')
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--restore_step', type=int, default=0)
@@ -29,7 +27,7 @@ args = parser.parse_args()
 #torch.manual_seed(0)
 # Get dataset
 if hp.with_hanzi:
-    dataset = Dataset(filename_py="train.txt",vocab_file_py = 'vocab_pinyin.txt',
+    dataset = Dataset(filename_py="train_pinyin.txt",vocab_file_py = 'vocab_pinyin.txt',
                  filename_hz = "train_hanzi.txt",
                  vocab_file_hz = 'vocab_hanzi.txt')
     py_vocab_size = len(dataset.py_vocab)
@@ -37,7 +35,7 @@ if hp.with_hanzi:
     
     
 else:
-    dataset = Dataset(filename_py="train.txt",vocab_file_py = 'vocab_pinyin.txt',
+    dataset = Dataset(filename_py="train_pinyin.txt",vocab_file_py = 'vocab_pinyin.txt',
                  filename_hz = None,
                  vocab_file_hz = None)
     py_vocab_size = len(dataset.py_vocab)
@@ -52,9 +50,7 @@ loader = DataLoader(dataset, batch_size=hp.batch_size**2, shuffle=True,
 
 # Define model
 model = FastSpeech2(py_vocab_size,hz_vocab_size).to(device)
-print("Model Has Been Defined")
 num_param = utils.get_param_num(model)
-print('Number of FastSpeech2 Parameters:', num_param)
 
 # Optimizer and loss
 optimizer = torch.optim.Adam(
@@ -143,7 +139,6 @@ for epoch in range(0,hp.epochs):
             #mel_target -= hp.mel_mean
             
             D = torch.from_numpy(data_of_batch["D"]).long().to(device)
-           
             log_D = torch.from_numpy(
                 data_of_batch["log_D"]).float().to(device)
 
@@ -177,7 +172,7 @@ for epoch in range(0,hp.epochs):
                 mel_output, mel_postnet_output, mel_target-hp.mel_mean, ~src_mask, ~mel_mask)
             
             
-            total_loss =  mel_postnet_loss + d_loss + mel_loss
+            total_loss =  mel_postnet_loss + d_loss# + mel_loss
             
             # Logger
             t_l = (total_loss.item() + K*t_l)/(1+K)
@@ -189,7 +184,6 @@ for epoch in range(0,hp.epochs):
             lr =  optimizer.param_groups[0]['lr'] 
             msg = 'total:{:.3},mel:{:.3},mel_postnet:{:.3},duration:{:.3},{:.3}'.format(t_l,m_l,m_p_l,d_l,lr)
             bar.set_description_str(msg)
-            logger.log_str(msg,False)
            
             
             # Backward
@@ -217,16 +211,18 @@ for epoch in range(0,hp.epochs):
 
                 str1 = "Epoch [{}/{}], Step [{}/{}]:".format(
                     epoch+1, hp.epochs, current_step, total_step)
-                logger.log_str(str1,True)
+                print(str1)
                 
                 str2 = "Total Loss: {:.4f}, Mel Loss: {:.4f}, Mel PostNet Loss: {:.4f}, Duration Loss: {:.4f}".format(
                     t_l, m_l, m_p_l, d_l)
-                logger.log_str(str2,True)
+                print(str2)
+                
                 
                 str3 = "Time Used: {:.3f}s, Estimated Time Remaining: {:.3f}s.".format(
                     (Now-Start), (total_step-current_step)*np.mean(Time))
                 
-                logger.log_str(str3,True)
+                print(str3)
+                
                 
                 
                 train_logger.add_scalar(
@@ -241,7 +237,7 @@ for epoch in range(0,hp.epochs):
             if current_step % hp.save_step == 0:
                 torch.save({'model': model.state_dict(), 'optimizer': optimizer.state_dict(
                 )}, os.path.join(checkpoint_path, 'checkpoint_{}.pth.tar'.format(current_step)))
-                logger.log_str("save model at step {} ...".format(current_step))
+                print("save model at step {} ...".format(current_step))
 
             if current_step % hp.synth_step == 0:
                 length = mel_len[0].item()
@@ -294,12 +290,12 @@ for epoch in range(0,hp.epochs):
 
     if t_l >= best_t_l*0.99 and (epoch+1) % 2==0:
         optimizer.param_groups[0]['lr'] *= 0.98
-        logger.log_str('train loss not decreasing, using new lr',optimizer.param_groups[0]['lr'])
+        print('train loss not decreasing, using new lr',optimizer.param_groups[0]['lr'])
         
         
     if t_l < best_t_l:
         best_t_l = t_l
-        logger.log_str('best training loss found:',best_t_l)
+        print('best training loss found:',best_t_l)
         
         
     with torch.no_grad():
@@ -315,10 +311,10 @@ for epoch in range(0,hp.epochs):
             best_val_loss = t_l
             best_name =  os.path.join(checkpoint_path, 'val_best_{}_{:.3}.pth.tar'.format(current_step,best_val_loss))
             torch.save( model.state_dict(),best_name)
-            logger.log_str('saving best model to ',best_name)
+            print('saving best model to ',best_name)
 
         else:
-            logger.log_str('model not improving,current loss {},best loss {}'.format(t_l,best_val_loss))
+            print('model not improving,current loss {},best loss {}'.format(t_l,best_val_loss))
         #else:
 
 

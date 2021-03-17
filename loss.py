@@ -21,9 +21,12 @@ class FastSpeech2Loss(nn.Module):
         
       #  p_smooth_loss = self.mae_loss(p_predicted[:,1:],p_predicted[:,:-1])
        # e_smooth_loss = self.mae_loss(e_predicted[:,1:],e_predicted[:,:-1])
-
-        log_d_predicted = log_d_predicted.masked_select(src_mask)
-        log_d_target = log_d_target.masked_select(src_mask)
+        try:
+            log_d_predicted = log_d_predicted.masked_select(src_mask)
+          
+            log_d_target = log_d_target.masked_select(src_mask)
+        except:
+            set_trace()
        # p_predicted = p_predicted.masked_select(mel_mask)
        # p_target = p_target.masked_select(mel_mask)
        # e_predicted = e_predicted.masked_select(mel_mask)

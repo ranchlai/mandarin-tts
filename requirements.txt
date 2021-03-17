@@ -8,6 +8,5 @@ tensorboard
 ipdb
 pypinyin
 jieba
-perf-logger
 numba==0.48
 

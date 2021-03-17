@@ -64,8 +64,8 @@ def synthesize(model, waveglow, py_text_seq,  cn_text_seq, duration_control=1.0,
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_file', type=str)
-    parser.add_argument('--text_file', type=str,default='input.txt')
+    parser.add_argument('--model_file', type=str,default='./ckpt/hanzi/checkpoint_630000.pth')
+    parser.add_argument('--text', type=str,default='这是一个例子')
     parser.add_argument('--with_hanzi', type=int, default=1)
     
     parser.add_argument('--duration_control', type=float, default=1.0)
@@ -79,7 +79,7 @@ if __name__=='__main__':
     #parser.add_argument('--pitch_control', type=float, default=1.0)
     #parser.add_argument('--energy_control', type=float, default=1.0)
     args = parser.parse_args()
-    args.model_file = './temp/hanzi/checkpoint_630000.pth.tar'
+   # args.model_file = './temp/hanzi/checkpoint_630000.pth.tar'
     
     if args.with_hanzi:
         hp.with_hanzi = True
@@ -102,12 +102,8 @@ if __name__=='__main__':
         os.makedirs(args.output_dir)
         
         
-    try:
-        lines = open(args.text_file).read().split('\n')
-    except:
-        print('failed to open text file',args.text_file)
-        exit(1)
-        
+    lines = [args.text]
+    
 
 
     sr = hp.sampling_rate
