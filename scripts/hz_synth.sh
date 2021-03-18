@@ -6,7 +6,7 @@ if [ -z $speed ];then
 fi
 
 if [ -z $step ];then
-	step=630000
+	step=500000
 fi
-python synthesize.py --with_hanzi 1 --model_file ./temp/hanzi/checkpoint_$step.pth.tar --text_file ./input.txt --channel 2 --duration_control $speed --output_dir ./outputs/hz_step$step-dur$speed
+python synthesize.py --with_hanzi 1 --model_file ./ckpt/hanzi/checkpoint_$step.pth.tar --text_file ./input.txt --channel 2 --duration_control $speed --output_dir ./outputs/hz_step$step-dur$speed
 
