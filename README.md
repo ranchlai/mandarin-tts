@@ -2,6 +2,24 @@
 
 This is a part-time on-going work. 建议先加星收藏，有时间我会随时更新。
 
+
+## updates
+
+-  加入了儿化音。run:
+
+```
+./scripts/hz_synth.sh 1.0 500000
+
+```
+
+<a href="https://drive.google.com/file/d/1EukyzY3tt1XBmUx17rpUfFlyQBEW1LFL/view?usp=sharing">Checkpoint is here</a> 
+
+Audio examples here: <a href="https://ranchlai.github.io/mandarin-tts/">this page</a>
+    
+
+
+
+    
 This is a modification and adpation of fastspeech2 to mandrin(普通话）. 
 <b> Many modifications to the origin paper, including</b>: 
 
@@ -59,7 +77,7 @@ python synthesize.py --model_file ./ckpt/pinyin/checkpoint_300000.pth.tar --with
 --text_file ./input.txt --channel 2 --duration_control 1.0 --output_dir ./output
 
 ```
-More details in <a href="https://ranchlai.github.io/mandarin-tts/">this page</a>
+
 
 ### Audio samples
 
