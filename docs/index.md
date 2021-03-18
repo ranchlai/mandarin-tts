@@ -77,6 +77,241 @@ It may take some time to load all audios in browser.
   
 
 
+### Novel sampels
+
+
+#### 常规句子 (注意字与字之前的音隔）
+
+- 前方路口左转，然后在下一个路口右转
+- 请输入您的卡号.您输入的卡号是六二二六,三八七六,零三四七,六九一五
+- 天青色等烟雨,而我在等你,炊烟袅袅升起，隔江千万里
+- 我听不清你在说什么，请大声一点
+- 如果觉得这个项目好，请手动加个星吧，感谢
+- 小毛豆你好，很高兴认识你,寒假马上要结束了.我觉得你最近有进步，继续加油.晚上要早点睡觉,因为明天要开学了.
+
+
+
+<table>
+   <thead>
+      <tr>
+         <th style="text-align: left">Text</th>
+         <th style="text-align: left">Normal</th>
+         <th style="text-align: left">Fast</th>
+         <th style="text-align: left">slow</th>
+      </tr>
+   </thead>
+   <tbody>
+           <tr>
+         <td>1
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel2/hz_1.0_630000_前方路口左转，然后在下一个路口右转.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_0.9_630000_前方路口左转，然后在下一个路口右转.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_1.2_630000_前方路口左转，然后在下一个路口右转.wav" autoplay="">
+        </audio></td>
+      </tr>
+         <tr>
+         <td>2
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel2/hz_1.0_630000_请输入您的卡号.您输入的卡号是六二二六,三八七六,零三四七,六九.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_0.9_630000_请输入您的卡号.您输入的卡号是六二二六,三八七六,零三四七,六九.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_1.2_630000_请输入您的卡号.您输入的卡号是六二二六,三八七六,零三四七,六九.wav" autoplay="">
+        </audio></td>
+      </tr>
+         <tr>
+         <td>3
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel2/hz_1.0_630000_天青色等烟雨,而我在等你,炊烟袅袅升起，隔江千万里.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_0.9_630000_天青色等烟雨,而我在等你,炊烟袅袅升起，隔江千万里.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_1.2_630000_天青色等烟雨,而我在等你,炊烟袅袅升起，隔江千万里.wav" autoplay="">
+        </audio></td>
+      </tr>
+         <tr>
+         <td>4
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel2/hz_1.0_630000_我听不清你在说什么，请大声一点.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_0.9_630000_我听不清你在说什么，请大声一点.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_1.2_630000_我听不清你在说什么，请大声一点.wav" autoplay="">
+        </audio></td>
+      </tr>
+         <tr>
+         <td>5
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel2/hz_1.0_630000_如果觉得这个项目好，请手动加个星吧，感谢.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_0.9_630000_如果觉得这个项目好，请手动加个星吧，感谢.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_1.2_630000_如果觉得这个项目好，请手动加个星吧，感谢.wav" autoplay="">
+        </audio></td>
+      </tr>
+       <tr>
+         <td>6
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel2/hz_1.0_630000_小毛豆你好，很高兴认识你.寒假马上要结束了.我觉得你最近有进步，.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_0.9_630000_小毛豆你好，很高兴认识你.寒假马上要结束了.我觉得你最近有进步，.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_1.2_630000_小毛豆你好，很高兴认识你.寒假马上要结束了.我觉得你最近有进步，.wav" autoplay="">
+        </audio></td>
+      </tr>
+
+      
+      
+   </tbody>
+</table>
+#### 饶口令
+
+- 有个小孩叫小杜,上街打醋又买布.买了布打了醋,回头看见鹰抓兔.放下布搁下醋,上前去追鹰和兔.飞了鹰跑了兔,洒了醋湿了布.
+- 红鲤鱼绿鲤鱼与驴
+- 黑化肥发灰会挥发,灰化肥挥发会发黑
+
+
+
+<table>
+   <thead>
+      <tr>
+         <th style="text-align: left">Text</th>
+         <th style="text-align: left">Normal</th>
+         <th style="text-align: left">Fast</th>
+         <th style="text-align: left">slow</th>
+      </tr>
+   </thead>
+   <tbody>
+      <tr>
+         <td>1
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel2/hz_1.0_630000_黑化肥发灰会挥发,灰化肥挥发会发黑.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_0.9_630000_黑化肥发灰会挥发,灰化肥挥发会发黑.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_1.2_630000_黑化肥发灰会挥发,灰化肥挥发会发黑.wav" autoplay="">
+        </audio></td>
+      </tr>
+          <tr>
+         <td>2
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel2/hz_1.0_630000_红鲤鱼绿鲤鱼与驴.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_0.9_630000_红鲤鱼绿鲤鱼与驴.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_1.2_630000_红鲤鱼绿鲤鱼与驴.wav" autoplay="">
+        </audio></td>
+      </tr>
+       <tr>
+      <td>9
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel2/hz_1.0_630000_有个小孩叫小杜,上街打醋又买布.买了布打了醋,回头看见鹰抓兔.放.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_0.9_630000_有个小孩叫小杜,上街打醋又买布.买了布打了醋,回头看见鹰抓兔.放.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_1.2_630000_有个小孩叫小杜,上街打醋又买布.买了布打了醋,回头看见鹰抓兔.放.wav" autoplay="">
+        </audio></td>
+      </tr>
+      
+      
+   </tbody>
+</table>
+
+
+#### 儿化音 
+
+在汉字转拼音时自动识别儿化音
+
+- 自个儿有多少斤两,心里还没个数吗
+- 这次考试有点儿紧张，下次再加油吧。
+- 这个小孩儿真懂事儿
+<table>
+   <thead>
+      <tr>
+         <th style="text-align: left">Text</th>
+         <th style="text-align: left">Normal</th>
+         <th style="text-align: left">Fast</th>
+         <th style="text-align: left">slow</th>
+      </tr>
+   </thead>
+   <tbody>
+      <tr>
+         <td>1
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel2/hz_1.0_630000_自个儿有多少斤两,心里还没个数吗.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_0.9_630000_自个儿有多少斤两,心里还没个数吗.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_1.2_630000_自个儿有多少斤两,心里还没个数吗.wav" autoplay="">
+        </audio></td>
+      </tr>
+          <tr>
+         <td>2
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel2/hz_1.0_630000_这次考试有点儿紧张，下次再加油吧。.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/ hz_0.9_630000_这次考试有点儿紧张，下次再加油吧。.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_1.2_630000_这次考试有点儿紧张，下次再加油吧。.wav" autoplay="">
+        </audio></td>
+      </tr>
+       <tr>
+      <td>9
+        </td>
+         <td><audio controls="controls">
+          <source src="./novel2/hz_1.0_630000_这个小孩儿真懂事儿.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_0.9_630000_这个小孩儿真懂事儿.wav" autoplay="">
+        </audio></td>
+          <td><audio controls="controls">
+          <source src="./novel2/hz_1.2_630000_这个小孩儿真懂事儿.wav" autoplay="">
+        </audio></td>
+      </tr>
+      
+      
+   </tbody>
+</table>
+
+
+
+## The following is obsolete. 以下例子是旧版本，仅供参考 
+
 ### Novel synthsized samples
 
 #### Input text
