@@ -79,7 +79,6 @@ if __name__=='__main__':
     #parser.add_argument('--pitch_control', type=float, default=1.0)
     #parser.add_argument('--energy_control', type=float, default=1.0)
     args = parser.parse_args()
-    args.model_file = './temp/hanzi/checkpoint_630000.pth.tar'
     
     if args.with_hanzi:
         hp.with_hanzi = True
@@ -115,10 +114,6 @@ if __name__=='__main__':
     print(args)
     model = get_FastSpeech2(args.model_file,args.with_hanzi).to(device)
     hp.vocoder = 'waveglow' #force to use waveglow
-    #if hp.vocoder == 'melgan':
-    #melgan = utils.get_melgan()
-        #melgan = Mel.load_melgan('./melgan/chkpt/aa/aa_aca5990_0100.pt','./melgan/config/default.yaml')        
-    #elif hp.vocoder == 'waveglow':
     print('loading waveglow...')
     waveglow = utils.get_waveglow()
     
