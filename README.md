@@ -116,7 +116,7 @@ Best practice: copy the ./data folder to /dev/shm to avoid harddisk reading (if 
 
 
 # References
-- <a href=https://github.com/ming024/FastSpeech2">https://github.com/ming024/FastSpeech2</a>. 
+- <a href="https://github.com/ming024/FastSpeech2">FastSpeech2</a>. 
 
 - [FastSpeech 2: Fast and High-Quality End-to-End Text to Speech](https://arxiv.org/abs/2006.04558), Y. Ren, *et al*.
 
