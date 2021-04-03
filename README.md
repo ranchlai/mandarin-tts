@@ -1,24 +1,5 @@
 # Chinese mandarin text to speech based on Fastspeech2 and Unet
 
-This is a part-time on-going work. 建议先加星收藏，有时间我会随时更新。
-
-
-## updates
-
--  加入了儿化音。run:
-
-```
-./scripts/hz_synth.sh 1.0 500000
-
-```
-
-<a href="https://drive.google.com/file/d/1EukyzY3tt1XBmUx17rpUfFlyQBEW1LFL/view?usp=sharing">Checkpoint is here</a> 
-
-Audio examples here: <a href="https://ranchlai.github.io/mandarin-tts/">this page</a>
-    
-
-
-
     
 This is a modification and adpation of fastspeech2 to mandrin(普通话）. 
 <b> Many modifications to the origin paper, including</b>: 
@@ -45,38 +26,43 @@ All experiments were done under ubuntu16.04 + python3.7 + torch 1.7.1. Other env
 - jieba 用于分词
 - perf_logger用于写训练日志
 
-To install all dependencies, run:
+First clone the project
 
 ```
+git clone https://github.com/ranchlai/mandarin-tts.git
+
+```
+If too slow, try
+
+```
+git clone https://hub.fastgit.org/ranchlai/mandarin-tts.git
+
+```
+
+To install all dependencies, run
+
+```
+
 sudo apt-get install ffmpeg
 pip3 install -r requirements.txt
 ```
 
 
-## Synthesis (inference)
+## Synthesize
 
-
-First clone the project and install the dependencies. 
-
-
-To generate audio samples, first you need to download the checkpoint from <a href="https://drive.google.com/file/d/11mBus5gn69_KwvNec9Zy9jjTs3LgHdx3/view?usp=sharing">google drive</a> and untar it to ```mandarin_tts/```
-上不了google可以用这个<a href="https://pan.baidu.com/s/1wwRYos4TuDZHjtKuEaRbnA ">link</a>,```5rur```
-
-- run the pinyin+hanzi model:
 
 ```
-python synthesize.py --model_file ./ckpt/hanzi/checkpoint_300000.pth.tar --text_file ./input.txt \
---channel 2 --duration_control 1.0 --output_dir ./output
+python synthesize.py --input="您的电话余额不足，请及时充值"
+```
+or put all text in input.txt, then 
+
+```
+python synthesize.py --input="./input.txt"
 
 ```
 
-- Or you can run pinyin model:
+Checkpoints and waveglow should be downloaded at 1st run. You will see some files in  `./checkpoint`, and `./waveglow`
 
-```
-python synthesize.py --model_file ./ckpt/pinyin/checkpoint_300000.pth.tar --with_hanzi 0 \
---text_file ./input.txt --channel 2 --duration_control 1.0 --output_dir ./output
-
-```
 
 
 ### Audio samples
