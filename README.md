@@ -16,6 +16,7 @@ This is a modification and adpation of fastspeech2 to mandrin(普通话）.
 
 ![arch](./docs/arch.png)
 
+
 ## Dependencies
 
 All experiments were done under ubuntu16.04 + python3.7 + torch 1.7.1. Other env probably works too.
@@ -63,7 +64,7 @@ python synthesize.py --input="./input.txt"
 
 Checkpoints and waveglow should be downloaded at 1st run. You will see some files in  `./checkpoint`, and `./waveglow`
 
-
+In case it fails, download the checkpoint manully <a href='https://zenodo.org/record/4625672/files/checkpoint_500000.pth'>here</a>
 
 ### Audio samples
 
