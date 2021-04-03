@@ -12,8 +12,15 @@ import audio as Audio
 import numpy as np
 from scipy.io import wavfile
 import librosa
+import subprocess
+from download_utils import download_checkpoint,download_waveglow
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #hp.with_hanzi = False
+
+r,path = subprocess.getstatusoutput("which ffmpeg")
+with_ffmpeg = r==0
+    
             
 def preprocess(phone):
 
@@ -22,13 +29,17 @@ def preprocess(phone):
 
     return torch.from_numpy(sequence).long().to(device)
 
+
+
+    
   
-def get_FastSpeech2(model_path,with_hanzi=True):
+def build_model():
     #checkpoint_path = os.path.join(
        # hp.checkpoint_path,'no_ch_goo', "checkpoint_{}.pth.tar".format(num))
     #checkpoint_path = '/home/ranch/code/FastSpeech2/ckpt/baker/checkpoint_380000.pth.tar'
+    model_path = './checkpoint/checkpoint_500000.pth'
+    download_checkpoint()
     print('loading model from',model_path)
-   
     
 
     model = FastSpeech2(py_vocab_size,hz_vocab_size)
@@ -38,7 +49,6 @@ def get_FastSpeech2(model_path,with_hanzi=True):
         sd = sd['model'] # using only the model part(rather than the optim part)
     model.load_state_dict(sd)
 
-   # model.load_state_dict(torch.load(best_model))
     model.requires_grad = False
     model.eval()
     return model
@@ -64,23 +74,18 @@ def synthesize(model, waveglow, py_text_seq,  cn_text_seq, duration_control=1.0,
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_file', type=str)
-    parser.add_argument('--text_file', type=str,default='input.txt')
-    parser.add_argument('--with_hanzi', type=int, default=1)
+    parser.add_argument('--input', type=str,default='input.txt')
+    parser.add_argument('--duration', type=float, default=1.0)
+    parser.add_argument('--channel', type=int, default=2)
+    parser.add_argument('--output_dir', type=str, default='./outputs/')
     
-    parser.add_argument('--duration_control', type=float, default=1.0)
-    parser.add_argument('--channel', type=int, default=1)
-    
-    
-    parser.add_argument('--output_dir', type=str, default='./output/')
-    
-
+    with_hanzi = True # only support hanzi 
     
     #parser.add_argument('--pitch_control', type=float, default=1.0)
     #parser.add_argument('--energy_control', type=float, default=1.0)
     args = parser.parse_args()
     
-    if args.with_hanzi:
+    if with_hanzi:
         hp.with_hanzi = True
         with open(os.path.join(hp.preprocessed_path,'vocab_hanzi.txt')) as F:
             cn_vocab = F.read().split('\n')
@@ -102,20 +107,23 @@ if __name__=='__main__':
         
         
     try:
-        lines = open(args.text_file).read().split('\n')
+        lines = open(args.input).read().split('\n')
     except:
-        print('failed to open text file',args.text_file)
-        exit(1)
+        print('Failed to open text file',args.input)
+        print('Treating input as text')
+        lines = [args.input]
+        
+        #exit(1)
         
 
 
     sr = hp.sampling_rate
     mute_len = int(sr*0.15)
     print(args)
-    model = get_FastSpeech2(args.model_file,args.with_hanzi).to(device)
+    model = build_model().to(device)
     hp.vocoder = 'waveglow' #force to use waveglow
     print('loading waveglow...')
-    waveglow = utils.get_waveglow()
+    waveglow = download_waveglow(device)
     
 #     #cn_vocab1 = ['pad'] + cn_vocab + ['sil','sp1']
 #     if hp.with_hanzi:
@@ -140,7 +148,7 @@ if __name__=='__main__':
 
             print('processing',cn_sentence)
             py_sentence = utils.convert_to_py(cn_sentence)
-            if args.with_hanzi:
+            if with_hanzi:
                 cn_sentence_seq,cn_sentence_aug = utils.convert_cn(cn_sentence)
                 cn_sentence_seq = torch.from_numpy(cn_sentence_seq).long().to(device)
                 py_sentence = utils.convert_er2(py_sentence,cn_sentence_aug)
@@ -150,7 +158,7 @@ if __name__=='__main__':
             else:
                 cn_sentence_seq = None
                 py_sentence_seq = preprocess(py_sentence)
-            dst_name = synthesize(model, waveglow, py_sentence_seq, cn_sentence_seq,args.duration_control,prefix=cn_sentence)
+            dst_name = synthesize(model, waveglow, py_sentence_seq, cn_sentence_seq,args.duration,prefix=cn_sentence)
             audio_names += [dst_name]
         
         #mute = np.zeros(mute_len)
@@ -159,16 +167,15 @@ if __name__=='__main__':
         s = np.concatenate(s)
         s = s/np.max(np.abs(s))*0.99
         fn = '/dev/shm/{}_{}_22k.wav'.format(hp.vocoder,chapter[:8])
-        step = args.model_file.split('_')[-1].split('.pth')[0]
        # print(fn)
         wavfile.write(fn,hp.sampling_rate,(s*32767).astype('int16'))
-        if args.with_hanzi:
-            final_fn = os.path.join(args.output_dir,'{}_{}_{}_{}.wav'.format('hz',args.duration_control,step,chapter[:32]))
-        else:   
-            final_fn = os.path.join(args.output_dir,'{}_{}_{}_{}.wav'.format('py',args.duration_control,step,chapter[:32]))
+        final_fn = os.path.join(args.output_dir,'{}_{}.wav'.format(args.duration,chapter[:32]))
+        if with_ffmpeg: 
+            cmd = 'ffmpeg -i {} -ac {} -ar 48000 -strict -2 {} -y'.format(fn,args.channel,final_fn)
+            os.system(cmd)
+        else:
+            os.system(f'mv {fn} {final_fn}')
             
-        cmd = 'ffmpeg -i {} -ac {} -ar 48000 -strict -2 {} -y'.format(fn,args.channel,final_fn)
-        os.system(cmd)
         print('audio written to {}'.format(final_fn))
 
 
