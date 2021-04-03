@@ -12,10 +12,6 @@ This is a modification and adpation of fastspeech2 to mandrin(普通话）.
 7. Changed the loss weight to  mel_postnet_loss x 1.0 + d_loss x 0.01 + mel_loss x 0.1 
 8. Used linear duration scale instead of log, and subtracted the duration_mean in training.
 
-## Model architecture
-
-![arch](./docs/arch.png)
-
 
 ## Dependencies
 
@@ -71,6 +67,13 @@ In case it fails, download the checkpoint manully <a href='https://zenodo.org/re
 Audio samples can be found in <a href="https://ranchlai.github.io/mandarin-tts/">this page</a>
 
 ![page](./docs/page.png)
+
+
+
+
+## Model architecture
+
+![arch](./docs/arch.png)
 
 
 ## Training
