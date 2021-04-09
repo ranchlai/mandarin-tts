@@ -121,6 +121,8 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
 
         n_position = len_max_seq + 1
+        
+        self.speaker_fc = nn.Linear(512,256,bias=False)
 
         self.position_enc = nn.Parameter(
             get_sinusoid_encoding_table(n_position, d_word_vec).unsqueeze(0), requires_grad=False)
@@ -128,7 +130,7 @@ class Decoder(nn.Module):
         self.layer_stack = nn.ModuleList([FFTBlock(
             d_model, d_inner, n_head, d_k, d_v, dropout=dropout) for _ in range(n_layers)])
 
-    def forward(self, enc_seq, mask, return_attns=False):
+    def forward(self, enc_seq, mask, speaker_emb,return_attns=False):
 
         dec_slf_attn_list = []
         batch_size, max_len = enc_seq.shape[0], enc_seq.shape[1]
@@ -143,7 +145,7 @@ class Decoder(nn.Module):
         else:
             dec_output = enc_seq + \
                 self.position_enc[:, :max_len, :].expand(batch_size, -1, -1)
-
+        dec_output = dec_output +  self.speaker_fc(speaker_emb)
         for dec_layer in self.layer_stack:
             dec_output, dec_slf_attn = dec_layer(
                 dec_output,

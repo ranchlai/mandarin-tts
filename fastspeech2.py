@@ -28,7 +28,7 @@ class FastSpeech2(nn.Module):
         if self.use_postnet:
             self.postnet = UNet(scale=8)
 
-    def forward(self, src_seq, src_len, hz_seq = None,mel_len=None, d_target=None,  max_src_len=None, max_mel_len=None, d_control=1.0, p_control=1.0, e_control=1.0):
+    def forward(self, src_seq,speaker_emb, src_len, hz_seq = None,mel_len=None, d_target=None,  max_src_len=None, max_mel_len=None, d_control=1.0, p_control=1.0, e_control=1.0):
         src_mask = get_mask_from_lengths(src_len, max_src_len)
         mel_mask = get_mask_from_lengths(
             mel_len, max_mel_len) if mel_len is not None else None
@@ -40,8 +40,9 @@ class FastSpeech2(nn.Module):
         else:
             variance_adaptor_output, d_prediction,   mel_len, mel_mask = self.variance_adaptor(
                 encoder_output, src_mask, mel_mask, d_target,   max_mel_len, d_control, p_control, e_control)
+            
 
-        decoder_output = self.decoder(variance_adaptor_output, mel_mask)
+        decoder_output = self.decoder(variance_adaptor_output, mel_mask,speaker_emb)
         mel_output = self.mel_linear(decoder_output)
         if self.use_postnet:
             unet_out = self.postnet(torch.unsqueeze(mel_output,1))
