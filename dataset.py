@@ -20,7 +20,7 @@ class Dataset(Dataset):
         
         self.py_vocab = open(os.path.join(hp.preprocessed_path, vocab_file_py)).read().split('\n')
         
-        assert('pad' in self.py_vocab and 'sp1' in self.py_vocab  and 'sil' in self.py_vocab)
+        #assert('pad' in self.py_vocab and 'sp1' in self.py_vocab  and 'sil' in self.py_vocab)
         _, self.py_text = process_meta(
             os.path.join(hp.preprocessed_path, filename_py))
        
@@ -30,7 +30,7 @@ class Dataset(Dataset):
         
         if hp.with_hanzi:
             self.hz_vocab = open(os.path.join(hp.preprocessed_path, vocab_file_hz)).read().split('\n')
-            assert('pad' in self.hz_vocab and 'sp1' in self.hz_vocab  and 'sil' in self.hz_vocab)
+          #  assert('pad' in self.hz_vocab and 'sp1' in self.hz_vocab  and 'sil' in self.hz_vocab)
             _, self.hz_text = process_meta(
                 os.path.join(hp.preprocessed_path, filename_hz))
             self.hz2idx = dict([(c,i) for i,c in enumerate(self.hz_vocab)])

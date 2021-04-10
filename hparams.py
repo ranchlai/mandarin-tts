@@ -1,1 +1,1 @@
-./config/hparams_hanzi.py
+./config/hparams_aishell3.py

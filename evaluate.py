@@ -6,6 +6,8 @@ import numpy as np
 import os
 import argparse
 import re
+import tqdm
+import pickle
 
 from fastspeech2 import FastSpeech2
 from loss import FastSpeech2Loss
@@ -27,11 +29,15 @@ def get_FastSpeech2(num):
     model.eval()
     return model
 
-import tqdm
+
 def evaluate(model, step, vocoder=None):
 
     # Get dataset
     print('evaluating..')
+    
+    with open('./aishell_mean_emb.pkl','rb') as F:
+        emb = pickle.load(F)
+
           
         
     # Get dataset
@@ -68,7 +74,7 @@ def evaluate(model, step, vocoder=None):
     current_step = 0
     idx = 0
     bar = tqdm.tqdm_notebook(total=len(dataset)//hp.batch_size)
-
+    model.eval()
     for i, batchs in enumerate(loader):
         for j, data_of_batch in enumerate(batchs):
             bar.update(1)
@@ -93,10 +99,14 @@ def evaluate(model, step, vocoder=None):
                 data_of_batch["mel_len"]).long().to(device)
             max_src_len = np.max(data_of_batch["src_len"]).astype(np.int32)
             max_mel_len = np.max(data_of_batch["mel_len"]).astype(np.int32)
+            
+            spk_emb = [np.expand_dims(emb[sid[:7]],[0,1]) for sid in data_of_batch['id']]
+            spk_emb = np.concatenate(spk_emb,0)
+            spk_emb = torch.tensor(spk_emb).cuda()
 
             with torch.no_grad():
                 mel_output, mel_postnet_output, log_duration_output, src_mask, mel_mask, out_mel_len = model(
-                src_seq=text, src_len=src_len, hz_seq=hz_text,mel_len=mel_len,
+                src_seq=text, speaker_emb = spk_emb,src_len=src_len, hz_seq=hz_text,mel_len=mel_len,
                 d_target=D, max_src_len=max_src_len, max_mel_len=max_mel_len)
                 # Cal Loss
                 mel_loss, mel_postnet_loss, d_loss = Loss(
@@ -182,6 +192,8 @@ def evaluate(model, step, vocoder=None):
         f_log.write(str5 + "\n")
         f_log.write(str6 + "\n")
         f_log.write("\n")
+        
+    model.train()
     return d_l,  mel_l, mel_p_l
 
 

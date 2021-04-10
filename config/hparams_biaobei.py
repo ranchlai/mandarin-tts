@@ -3,7 +3,7 @@ import os
 # Dataset
 wav_path = "./BZNSYP/wav"
 dataset = "baker"
-#data_path = "./Blizzard-2013/train/segmented/"
+
 
 # Text
 
@@ -44,7 +44,7 @@ variance_predictor_filter_size = 256
 variance_predictor_kernel_size = 3
 variance_predictor_dropout = 0.5
 
-max_seq_len = 1000
+max_seq_len = 2000
 
 
 
@@ -69,7 +69,10 @@ n_bins = 256
 #preprocessed_path = "/dev/shm/BZNSYP/"
 #for faster training
 #preprocessed_path = "/dev/shm/data/"
+
 preprocessed_path = "./data/"
+
+
 
 checkpoint_path = "./temp/hanzi/" 
 synth_path = "./synth/hanzi/"
@@ -98,7 +101,7 @@ vocoder = 'waveglow'
 #log_offset = 1.
 
 #precomputed duration_mean
-duration_mean = 18.877746355061273
+duration_mean = 18.877746355061273 # for baker/biaobei
 mel_mean = -6.0304103
 
 # Save, log and synthesis
