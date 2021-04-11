@@ -12,6 +12,7 @@ with_hanzi = True
 hz_emb_size = 256
 hz_emb_weight=0.1
 
+start_lr = 1e-5
 # Audio and mel
 ### for LJSpeech ###
 sampling_rate = 22050
