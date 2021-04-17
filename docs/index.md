@@ -7,6 +7,68 @@ Below are the audio samples from step 300k, pinyin + hanzi + unet(as postnet).
 
 It may take some time to load all audios in browser. 
 
+
+### multi-speaker samples
+<b>Listen carefully</b>
+<table>
+   <tbody>
+      <tr>
+         <td><audio controls="controls">
+          <source src="./aishell3/SSB0241_1.0_有个小孩叫小杜.上街打醋又买布.买了布打了醋.回头看见鹰抓兔.放.wav" autoplay="">
+        </audio>
+        </td>
+      </tr>
+       <tr>
+         <td><audio controls="controls">
+          <source src="./aishell3/SSB0341_1.0_红鲤鱼绿鲤鱼与驴.wav" autoplay="">
+        </audio>
+        </td>
+      </tr>
+      <tr>
+         <td><audio controls="controls">
+          <source src="./aishell3/SSB0395_1.0_这个小孩儿真懂事儿.wav" autoplay="">
+        </audio>
+        </td>
+      </tr>
+         <tr>
+         <td><audio controls="controls">
+          <source src="./aishell3/SSB0535_1.0_前方路口左转，然后在下一个路口右转.wav" autoplay="">
+        </audio>
+        </td>
+      </tr>
+    <tr>
+         <td><audio controls="controls">
+          <source src="./aishell3/SSB0606_1.0_天青色等烟雨,而我在等你,炊烟袅袅升起，隔江千万里.wav" autoplay="">
+        </audio>
+        </td>
+      </tr>
+     <tr>
+         <td><audio controls="controls">
+          <source src="./aishell3/SSB0716_1.0_黑化肥发灰会挥发,灰化肥挥发会发黑.wav" autoplay="">
+        </audio>
+        </td>
+      </tr>
+      <tr>
+         <td><audio controls="controls">
+          <source src="./aishell3/SSB1135_1.0_请输入您的卡号.您输入的卡号是六二二六,三八七六,零三四七,六九.wav" autoplay="">
+        </audio>
+        </td>
+      </tr>
+      <td><audio controls="controls">
+          <source src="./aishell3/SSB1402_1.0_这次考试有点儿紧张，下次再加油吧。.wav autoplay="">
+        </audio>
+        </td>
+      </tr>
+      <td><audio controls="controls">
+          <source src="./aishell3/SSB1431_1.0_小毛豆你好，很高兴认识你,寒假马上要结束了.我觉得你最近有进步，.wav" autoplay="">
+        </audio>
+        </td>
+      </tr>
+    
+   </tbody>
+</table>
+
+
 ### Samples from training loop
 
 
