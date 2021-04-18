@@ -13,6 +13,7 @@ This is a modification and adpation of fastspeech2 to mandrin(普通话）.
 8. Used linear duration scale instead of log, and subtracted the duration_mean in training.
 
 
+
 ## Dependencies
 
 All experiments were done under ubuntu16.04 + python3.7 + torch 1.7.1. Other env probably works too.
@@ -64,10 +65,13 @@ In case it fails, download the checkpoint manully <a href='https://zenodo.org/re
 
 ### Audio samples
 
-Audio samples can be found in <a href="https://ranchlai.github.io/mandarin-tts/">this page</a>
+New audios [aishell3](./samples/aishell3) added. Checkpoints and training scripts will be ready soon. I am now switching to paddlepaddle, so the checkpoint will be released in paddlepaddle.
+
+
+
+Audio samples for biaobei and aishell3 can also be found in <a href="https://ranchlai.github.io/mandarin-tts/">this page</a>
 
 ![page](./docs/page.png)
-
 
 
 
