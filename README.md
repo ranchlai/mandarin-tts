@@ -12,7 +12,13 @@ This is a modification and adpation of fastspeech2 to mandrin(普通话）.
 7. Changed the loss weight to  mel_postnet_loss x 1.0 + d_loss x 0.01 + mel_loss x 0.1 
 8. Used linear duration scale instead of log, and subtracted the duration_mean in training.
 
+### Audio samples
 
+New audios for [aishell3](./docs/samples/aishell3) added. Checkpoints and training scripts  for multispeaker will be ready soon. 
+
+Audio samples for biaobei and aishell3 can also be found in <a href="https://ranchlai.github.io/mandarin-tts/">this page</a>
+
+![page](./docs/page.png)
 
 ## Dependencies
 
@@ -63,15 +69,7 @@ Checkpoints and waveglow should be downloaded at 1st run. You will see some file
 
 In case it fails, download the checkpoint manully <a href='https://zenodo.org/record/4625672/files/checkpoint_500000.pth'>here</a>
 
-### Audio samples
 
-New audios [aishell3](./samples/aishell3) added. Checkpoints and training scripts will be ready soon. I am now switching to paddlepaddle, so the checkpoint will be released in paddlepaddle.
-
-
-
-Audio samples for biaobei and aishell3 can also be found in <a href="https://ranchlai.github.io/mandarin-tts/">this page</a>
-
-![page](./docs/page.png)
 
 
 
