@@ -58,6 +58,8 @@ pip3 install -r requirements.txt
 ```
 python synthesize.py --input="您的电话余额不足，请及时充值"
 ```
+(see this <a href="https://github.com/ranchlai/mandarin-tts/issues/4">issue</a> for help)
+
 or put all text in input.txt, then 
 
 ```
