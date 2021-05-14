@@ -1,11 +1,12 @@
+import copy
+import math
+from collections import OrderedDict
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from ipdb import set_trace
-from collections import OrderedDict
-import numpy as np
-import copy
-import math
 
 import hparams as hp
 import utils
@@ -19,13 +20,13 @@ def clones(module, N):
 
 class VarianceAdaptor(nn.Module):
     """ Variance Adaptor """
-
     def __init__(self):
         super(VarianceAdaptor, self).__init__()
         self.duration_predictor = VariancePredictor()
         self.length_regulator = LengthRegulator()
         #self.pitch_predictor = VariancePredictor()
-       # self.energy_predictor = VariancePredictor()
+
+    # self.energy_predictor = VariancePredictor()
 
 #         self.pitch_bins = nn.Parameter(torch.exp(torch.linspace(
 #             np.log(hp.f0_min+1e-8), np.log(hp.f0_max), hp.n_bins-1)), requires_grad=False)
@@ -34,23 +35,36 @@ class VarianceAdaptor(nn.Module):
 #         self.pitch_embedding = nn.Embedding(hp.n_bins, hp.encoder_hidden)
 #         self.energy_embedding = nn.Embedding(hp.n_bins, hp.encoder_hidden)
 
-    def forward(self, x, src_mask, mel_mask=None, duration_target=None, max_len=None, d_control=1.0, p_control=1.0, e_control=1.0):
+    def forward(self,
+                x,
+                src_mask,
+                mel_mask=None,
+                duration_target=None,
+                max_len=None,
+                d_control=1.0,
+                p_control=1.0,
+                e_control=1.0):
 
         log_duration_prediction = self.duration_predictor(x, src_mask)
         if duration_target is not None:
-            duration_rounded = torch.clamp(
-                torch.round((duration_target+hp.duration_mean)*d_control), min=0)
-            
+            duration_rounded = torch.clamp(torch.round(
+                (duration_target + hp.duration_mean) * d_control),
+                                           min=0)
+
             x, mel_len = self.length_regulator(x, duration_rounded, max_len)
         else:
-           # duration_rounded = torch.clamp(
-             #   (torch.round(torch.exp(log_duration_prediction)-hp.log_offset)*d_control), min=0)
-            duration_rounded = torch.clamp(
-                torch.round((log_duration_prediction.detach()+hp.duration_mean)*d_control),min=0)
-           # print('duration',duration_rounded)
-                
+            # duration_rounded = torch.clamp(
+            #   (torch.round(torch.exp(log_duration_prediction)-hp.log_offset)*d_control), min=0)
+            duration_rounded = torch.clamp(torch.round(
+                (log_duration_prediction.detach() + hp.duration_mean) *
+                d_control),
+                                           min=0)
+            # print('duration',duration_rounded)
+
             x, mel_len = self.length_regulator(x, duration_rounded, max_len)
             mel_mask = utils.get_mask_from_lengths(mel_len)
+
+
 #         tf = float(torch.rand(1))>0.8
 #         pitch_prediction = self.pitch_predictor(x, mel_mask)
 #         if pitch_target is not None and tf:
@@ -70,14 +84,13 @@ class VarianceAdaptor(nn.Module):
 #             energy_embedding = self.energy_embedding(
 #                 torch.bucketize(energy_prediction.detach(), self.energy_bins))
 
-        #x = x + pitch_embedding + energy_embedding
+#x = x + pitch_embedding + energy_embedding
 
-        return x, log_duration_prediction,  mel_len, mel_mask
+        return x, log_duration_prediction, mel_len, mel_mask
 
 
 class LengthRegulator(nn.Module):
     """ Length Regulator """
-
     def __init__(self):
         super(LengthRegulator, self).__init__()
 
@@ -113,7 +126,6 @@ class LengthRegulator(nn.Module):
 
 class VariancePredictor(nn.Module):
     """ Duration, Pitch and Energy Predictor """
-
     def __init__(self):
         super(VariancePredictor, self).__init__()
 
@@ -123,22 +135,22 @@ class VariancePredictor(nn.Module):
         self.conv_output_size = hp.variance_predictor_filter_size
         self.dropout = hp.variance_predictor_dropout
 
-        self.conv_layer = nn.Sequential(OrderedDict([
-            ("conv1d_1", Conv(self.input_size,
-                              self.filter_size,
-                              kernel_size=self.kernel,
-                              padding=(self.kernel-1)//2)),
-            ("relu_1", nn.LeakyReLU()),
-            ("layer_norm_1", nn.LayerNorm(self.filter_size)),
-            ("dropout_1", nn.Dropout(self.dropout)),
-            ("conv1d_2", Conv(self.filter_size,
-                              self.filter_size,
-                              kernel_size=self.kernel,
-                              padding=1)),
-            ("relu_2", nn.LeakyReLU()),
-           ("layer_norm_2", nn.LayerNorm(self.filter_size)),
-            ("dropout_2", nn.Dropout(self.dropout))
-        ]))
+        self.conv_layer = nn.Sequential(
+            OrderedDict([("conv1d_1",
+                          Conv(self.input_size,
+                               self.filter_size,
+                               kernel_size=self.kernel,
+                               padding=(self.kernel - 1) // 2)),
+                         ("relu_1", nn.LeakyReLU()),
+                         ("layer_norm_1", nn.LayerNorm(self.filter_size)),
+                         ("dropout_1", nn.Dropout(self.dropout)),
+                         ("conv1d_2",
+                          Conv(self.filter_size,
+                               self.filter_size,
+                               kernel_size=self.kernel,
+                               padding=1)), ("relu_2", nn.LeakyReLU()),
+                         ("layer_norm_2", nn.LayerNorm(self.filter_size)),
+                         ("dropout_2", nn.Dropout(self.dropout))]))
 
         self.linear_layer = nn.Linear(self.conv_output_size, 1)
 
@@ -157,7 +169,6 @@ class Conv(nn.Module):
     """
     Convolution Module
     """
-
     def __init__(self,
                  in_channels,
                  out_channels,

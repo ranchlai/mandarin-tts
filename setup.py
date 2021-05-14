@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="mtts", # Replace with your own username
+    name="mtts",  # Replace with your own username
     version="1.0.0",
     scripts=['mtts'],
     author="ranchlai",

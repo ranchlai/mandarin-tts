@@ -1,6 +1,7 @@
 import hashlib
 import logging
 import os
+import random
 import tarfile
 import threading
 import urllib
@@ -8,7 +9,6 @@ import urllib.request
 import zipfile
 from queue import Queue
 from typing import Any, Iterable, List, Optional
-import random
 
 import torch
 from tqdm import tqdm
@@ -28,7 +28,8 @@ def stream_url(url: str,
 
     # If we already have the whole file, there is no need to download it again
     req = urllib.request.Request(url, method="HEAD")
-    url_size = int(urllib.request.urlopen(req).info().get("Content-Length", -1))
+    url_size = int(
+        urllib.request.urlopen(req).info().get("Content-Length", -1))
     if url_size == start_byte:
         return
 
@@ -52,7 +53,11 @@ def stream_url(url: str,
             yield chunk
             num_bytes += len(chunk)
             pbar.update(len(chunk))
-def validate_file(file_obj: Any, hash_value: str, hash_type: str = "sha256") -> bool:
+
+
+def validate_file(file_obj: Any,
+                  hash_value: str,
+                  hash_type: str = "sha256") -> bool:
     """Validate a given file object with its hash.
     Args:
         file_obj: File object to read from.
@@ -71,13 +76,12 @@ def validate_file(file_obj: Any, hash_value: str, hash_type: str = "sha256") -> 
 
     while True:
         # Read by chunk to avoid filling memory
-        chunk = file_obj.read(1024 ** 2)
+        chunk = file_obj.read(1024**2)
         if not chunk:
             break
         hash_func.update(chunk)
 
     return hash_func.hexdigest() == hash_value
-
 
 
 def download_url(url: str,
@@ -110,8 +114,8 @@ def download_url(url: str,
 
     elif not resume and os.path.exists(filepath):
         raise RuntimeError(
-            "{} already exists. Delete the file manually and retry.".format(filepath)
-        )
+            "{} already exists. Delete the file manually and retry.".format(
+                filepath))
     else:
         mode = "wb"
         local_size = None
@@ -121,50 +125,63 @@ def download_url(url: str,
             if validate_file(file_obj, hash_value, hash_type):
                 return
         raise RuntimeError(
-            "The hash of {} does not match. Delete the file manually and retry.".format(
-                filepath
-            )
-        )
+            "The hash of {} does not match. Delete the file manually and retry."
+            .format(filepath))
 
     with open(filepath, mode) as fpointer:
-        for chunk in stream_url(url, start_byte=local_size, progress_bar=progress_bar):
+        for chunk in stream_url(url,
+                                start_byte=local_size,
+                                progress_bar=progress_bar):
             fpointer.write(chunk)
 
     with open(filepath, "rb") as file_obj:
         if hash_value and not validate_file(file_obj, hash_value, hash_type):
             raise RuntimeError(
-                "The hash of {} does not match. Delete the file manually and retry.".format(
-                    filepath
-                )
-            )
+                "The hash of {} does not match. Delete the file manually and retry."
+                .format(filepath))
     #return filepath
-            
-            
+
+
 def download_checkpoint():
     url = 'https://zenodo.org/record/4625672/files/checkpoint_500000.pth'
-    os.makedirs('./checkpoint/',exist_ok=True)
-    return download_url(url,'./checkpoint/',resume=True,hash_value='14002c23879f6b5d0cd987f3c3e1a160',hash_type='md5')
+    os.makedirs('./checkpoint/', exist_ok=True)
+    return download_url(url,
+                        './checkpoint/',
+                        resume=True,
+                        hash_value='14002c23879f6b5d0cd987f3c3e1a160',
+                        hash_type='md5')
+
 
 def download_waveglow(device):
-    
-    os.makedirs('./waveglow/',exist_ok=True)
-    
+
+    os.makedirs('./waveglow/', exist_ok=True)
+
     try:
-         waveglow = torch.hub.load('./waveglow/DeepLearningExamples-torchhub/', 'nvidia_waveglow',source='local')
+        waveglow = torch.hub.load('./waveglow/DeepLearningExamples-torchhub/',
+                                  'nvidia_waveglow',
+                                  source='local')
     except:
-        if random.randint(0,1)==0:
-            download_url('https://hub.fastgit.org/nvidia/DeepLearningExamples/archive/torchhub.zip','./waveglow',
-                         hash_type='md5',hash_value='27ef24b9c4a2ce6c26f26998aee26f44',
-                         resume=True)
+        if random.randint(0, 1) == 0:
+            download_url(
+                'https://hub.fastgit.org/nvidia/DeepLearningExamples/archive/torchhub.zip',
+                './waveglow',
+                hash_type='md5',
+                hash_value='27ef24b9c4a2ce6c26f26998aee26f44',
+                resume=True)
         else:
-            download_url('https://github.com/nvidia/DeepLearningExamples/archive/torchhub.zip','./waveglow',
-                         hash_type='md5',hash_value='27ef24b9c4a2ce6c26f26998aee26f44',
-                         resume=True)
-        os.system('unzip ./waveglow/DeepLearningExamples-torchhub.zip -d ./waveglow/')
-        waveglow = torch.hub.load('./waveglow/DeepLearningExamples-torchhub/', 'nvidia_waveglow',source='local')
-        
-    
-   
+            download_url(
+                'https://github.com/nvidia/DeepLearningExamples/archive/torchhub.zip',
+                './waveglow',
+                hash_type='md5',
+                hash_value='27ef24b9c4a2ce6c26f26998aee26f44',
+                resume=True)
+        os.system(
+            'unzip ./waveglow/DeepLearningExamples-torchhub.zip -d ./waveglow/'
+        )
+        waveglow = torch.hub.load('./waveglow/DeepLearningExamples-torchhub/',
+                                  'nvidia_waveglow',
+                                  source='local')
+
     waveglow = waveglow.remove_weightnorm(waveglow)
     waveglow.eval()
     for m in waveglow.modules():
@@ -172,4 +189,6 @@ def download_waveglow(device):
             setattr(m, 'padding_mode', 'zeros')
     waveglow.to(device)
     return waveglow
+
+
 #download_url('https://github.com/nvidia/DeepLearningExamples/archive/torchhub.zip','./waveglow',resume=True)

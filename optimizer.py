@@ -3,13 +3,12 @@ import numpy as np
 
 class ScheduledOptim():
     ''' A simple wrapper class for learning rate scheduling '''
-
     def __init__(self, optimizer, d_model, n_warmup_steps, current_steps):
         self._optimizer = optimizer
         self.n_warmup_steps = n_warmup_steps
         self.n_current_steps = current_steps
         self.init_lr = np.power(d_model, -0.5)
-        print('init lr',self.init_lr)
+        print('init lr', self.init_lr)
 
     def step_and_update_lr(self):
         self._update_learning_rate()
@@ -22,7 +21,8 @@ class ScheduledOptim():
     def _get_lr_scale(self):
         return np.min([
             np.power(self.n_current_steps, -0.5),
-            np.power(self.n_warmup_steps, -1.5) * self.n_current_steps])
+            np.power(self.n_warmup_steps, -1.5) * self.n_current_steps
+        ])
 
     def _update_learning_rate(self):
         ''' Learning rate scheduling per step '''
