@@ -1,0 +1,148 @@
+
+dataset:
+  train:
+    wav_scp: './train/wav.scp'
+    mel_scp: './train/mel.scp'
+    dur_scp: './train/dur.scp'
+    emb_type1:
+      _name: 'pinyin'
+      scp: './train/py.scp'
+      vocab: 'py.vocab'
+    emb_type2:
+      _name: 'graphic'
+      scp: './train/gp.scp'
+      vocab: 'gp.vocab'
+
+    emb_type3:
+      _name: 'speaker'
+      scp: './train/spk.scp'
+      vocab: # dosn't need vocab
+
+training:
+  batch_size: 16
+  epochs: 10000
+  grad_clip_thresh: 1.0
+  acc_step: 1
+  checkpoint_path: "./checkpoints/"
+  log_path: "./log/"
+  checkpoint_step: 5000
+  synth_step: 5000
+  log_step: 20
+  num_workers: 8
+
+  evaluation_step: 1000
+
+optimizer:
+    type: Adam
+    n_warm_up_step: 2000
+    #lr_decrease_step: 10000
+    #lr_decrease_factor: 
+    params:
+      betas: [0.9,0.98]
+      eps: !!float 1e-9
+      weight_decay: !!float 0.0
+      lr: !!float  1e-4
+lr_scheduler:
+    type: CyclicLR
+    params:
+      base_lr: !!float 1e-7
+      max_lr: !!float 1e-4
+      step_size_up: 5000
+      step_size_down: 8000
+      cycle_momentum: False
+
+vocoder:
+    type: 'VocGan'
+    params:
+      denoise: True
+      
+      
+
+fbank:
+  sample_rate: 22050
+  n_fft: 1024
+  hop_length: 256
+  win_length: 1024
+  max_wav_value: 32768.0
+  n_mels: 80
+  fmin: 0.0
+  fmax: 8000.0 # should be 11025
+  mel_mean: -6.0304103
+
+encoder:
+    encoder_type: 'FS2TransformerEncoder'
+    conf:
+      n_layers: 4
+      n_heads: 2
+      hidden_dim: 256
+      dropout: 0.25
+      d_inner: 1024
+      max_len: 2048
+
+decoder:
+    decoder_type: 'FS2TransformerDecoder'
+    input_dim: 256 # should be the same as the output of encoder
+    n_layers: 4
+    n_heads: 2
+    hidden_dim: 256
+    d_inner: 1024
+    dropout: 0.25
+    max_len: 2048 # max len of seq, for position embedding pre-computation
+
+#(class) Decoder(input_dim: int = 256, n_layers: int = 4, n_heads: int = 2,
+#hidden_dim: int = 256, d_inner: int = 1024, dropout: float = 0.5, max_len: int = 2048
+postnet:
+  postnet_type: 'PostUNet' # 'PostUNet', 'PostNet1d'
+speaker_embedding:
+    enable: True
+    vocab: #None
+    vocab_size: 1 # 
+    weight: 1.0
+    dim: 256
+
+utterence_embedding:
+    enable: False
+    type: 'lstm' # resnet
+    feature_config:
+      type: 'mel'
+      n_mels: 80
+      sampling_rate: 22050
+      n_fft: 1024
+      hop_length: 256
+      win_length: 1024
+
+    model_config:
+      n_layers: 3
+      bidirectional: True
+
+hanzi_embedding:
+    enable: True
+    type: embedding
+    vocab: './gp.vocab'
+    dim: 256
+    weight: 0.5
+    max_seq_len: 100
+
+pinyin_embedding:
+    enable: True
+    type: embedding
+    vocab: './py.vocab'
+    dim: 256
+    weight: 1.0
+    max_seq_len: 100
+
+duration_predictor:
+  input_dim: 256 # should be the same as encoder hiddien_dim
+  filter_size: 256
+  kernel_size: 3
+  dropout: 0.5
+  duration_mean: 21.517294924096635 #for aishell3
+
+f0_predictor:
+  enable: False
+  filter_size: 256
+  kernel_size: 3
+  dropout: 0.5
+  n_bins: 256
+synthesis: 
+  normalize: True # normalize the sound volume

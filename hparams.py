@@ -1,1 +1,0 @@
-./config/hparams_aishell3.py

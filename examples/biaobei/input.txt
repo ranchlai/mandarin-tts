@@ -1,0 +1,13 @@
+#name|py|gp|spk
+text1|sil ni3 qu4 zuo4 fan4 ba5 sil|sil 你 去 做 饭 吧 sil|0
+text2|sil ni3 qu4 zuo4 fan4 ba5 sil|sil 你 去 做 饭 吧 sil|0
+text3|sil you3 ge4 xiao3 hai2 jiao4 xiao3 du4 sil|sil 有　个 小 孩 叫 小 杜 sil|0
+text4|sil shang4 jie1 da3 cu4 you4 mai3 bu4 sil|sil 上 街 打 醋 又 买 布 sil|0
+text5|sil mai3 le5 bu4 da3 le5 cu4 sil|sil 买 了 布 打 了 醋 sil|0
+text6|sil hui2 tou2 kan4 jian4 ying1 zhua1 tu4 sil|sil 回 头 看 见 鹰 抓 兔 sil|0
+text7|sil fang4 xia4 bu4 ge1 xia4 cu4 sil|sil 放 下 布 搁 下 醋 sil|0
+text8|sil shang4 qian2 qu4 zhui1 ying1 he2 tu4 sil|sil 上 前 去 追 鹰 和 兔 sil|0
+text9|sil fei1 le5 ying1 pao3 le5 tu4 sil|sil 飞 了 鹰 跑 了 兔 sil|0
+text10|sil sa3 le5 cu4 shi1 le5 bu4 sil|sil 洒 了 醋 湿 了 布 sil|0
+text11|sil wei4 shi4 ying4 xin1 de5 wang3 luo4 chuan2 bo1 fang1 shi4 he2 du2 zhe3 yue4 du2 xi2 guan4 sil|sil 为 适 应 新 的 网 络 传 播 方 式 和 读 者 阅 读 习 惯 sil|0
+text12|sil zhe4 ge4 xiao3 hair2 r zhen1 dong3 shir4 sil|sil 这 个 小 孩 儿 真 懂 事 sil|0

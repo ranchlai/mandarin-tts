@@ -1,131 +1,92 @@
-# Chinese mandarin text to speech based on Fastspeech2 and Unet
+# Chinese mandarin text to speech (MTTS)
 
-    
-This is a modification and adpation of fastspeech2 to mandrin(普通话）. 
-<b> Many modifications to the origin paper, including</b>: 
+This is a modularized Text-to-speech framework aiming to support fast research and product developments. Main features include
+- all modules are configurable via yaml, 
+- speaker embedding / prosody embeding/ multi-stream  text embedding are supported and configurable, 
+- various vocoders (VocGAN, hifi-GAN, waveglow, melGAN) are supported by adapter so that comparison across different vocoders can be done easily, 
+- durations/pitch/energy variance predictor are supported, and other variances can be added easily, 
+- and more on the road-map. 
 
-1. Use UNet instead of postnet (1d conv). Unet is good at recovering spect details and much easier to train than original postnet
-2. Added hanzi(汉字，chinese character) embedding. It's harder for human being to read pinyin, but easier to read chinese character. Also this makes it more end-to-end. 
-3. Removed pitch and energy embedding, and also the corresponding prediction network. This makes its much easier to train, especially for my gtx1060 card. I will try bringing them back if I have time (and hardware resources)
-5. Use only waveglow in synth, as it's much better than melgan and griffin-lim.
-6. subtracted the mel-mean for (seems much) easier prediction. 
-7. Changed the loss weight to  mel_postnet_loss x 1.0 + d_loss x 0.01 + mel_loss x 0.1 
-8. Used linear duration scale instead of log, and subtracted the duration_mean in training.
+Contribuations are welcome. 
 
 ### Audio samples
 
-New audios for [aishell3](./docs/samples/aishell3) added. Checkpoints and training scripts  for multispeaker will be ready soon. 
+- Interesting audio samples for aishell3 added [here](./docs/samples/aishell3).
+- The <a href="https://ranchlai.github.io/mandarin-tts/">github page</a> also hosts some samples for both [biaobei](https://www.data-baker.com/en/#/data/index/source) and [aishell3](https://www.openslr.org/93/).
 
-Audio samples for biaobei and aishell3 can also be found in <a href="https://ranchlai.github.io/mandarin-tts/">this page</a>
+## Quick start
 
-![page](./docs/page.png)
-
-## Dependencies
-
-All experiments were done under ubuntu16.04 + python3.7 + torch 1.7.1. Other env probably works too.
-
-- torch for training and inference
-- librosa and ffmpeg for basic audio processing
-- pypinyin用于转换汉字为拼音
-- jieba 用于分词
-- perf_logger用于写训练日志
-
-First clone the project
+### Install
 
 ```
 git clone https://github.com/ranchlai/mandarin-tts.git
-
-```
-If too slow, try
-
-```
-git clone https://hub.fastgit.org/ranchlai/mandarin-tts.git
+cd mandarin-tts
+git submodule update --force --recursive --init --remote
+pip install -e .  # this is necessary!
 
 ```
 
-To install all dependencies, run
+### Training
+Two examples are provided: biaobei and aishell3.
+First prepare the melspectrogram features using [./examples/wav2mel.py](./examples/wav2mel.py)
 
+``` sh
+cd examples
+python wav2mel.py -c ./aishell3/config.yaml -w <aishell3_wav_folder> -m ./aishell3/mels -d cpu
 ```
 
-sudo apt-get install ffmpeg
-pip3 install -r requirements.txt
+Then prepare the scp files necessary for training, 
+``` sh
+cd aishell3
+python prepare.py --wav_folder <aishell3_wav_folder>  --mel_folder ../mels/ --dst_folder ./train/
 ```
 
-
-## Synthesize
-
-
-```
-python synthesize.py --input="您的电话余额不足，请及时充值"
-```
-(see this <a href="https://github.com/ranchlai/mandarin-tts/issues/4">issue</a> for help)
-
-or put all text in input.txt, then 
-
-```
-python synthesize.py --input="./input.txt"
-
+Now you can start your training by 
+``` sh
+cd examples/aishell3
+python ../../mtts/train.py -c config.yaml -d cuda:0
 ```
 
-Checkpoints and waveglow should be downloaded at 1st run. You will see some files in  `./checkpoint`, and `./waveglow`
+For biaobei dataset, the workflow is the same, except that there is no speaker embedding and you can add prosody embedding. 
 
-In case it fails, download the checkpoint manully <a href='https://zenodo.org/record/4625672/files/checkpoint_500000.pth'>here</a>
-
-
-
-
-
-## Model architecture
-
-![arch](./docs/arch.png)
-
-
-## Training
-
-(under testing)
-
-Currently I am use baker dataset(标贝）, which can be downloaded from <a href="https://www.data-baker.com/open_source.html">baker</a>。 The dataset is for non-commercial purpose only, and so is the pretrained model. 
-
-
-I have processed the data for this experiment. You can also try 
+### Synthesize 
+``` sh
+python ../../mtts/synthesize.py  -d cuda --c config.yaml --checkpoint ./checkpoints/checkpoint_1240000.pth.tar -i input.txt
 ```
-python3 preprocess_pinyin.py 
-python3 preprocess_hanzi.py 
+
+#### Input text prepare
+You can generate input text by 
 ```
-to generate required aligments, mels, vocab for pinyin and hanzi for training. Everythin should be ready under the directory './data/'(you can change the directory in hparams.py) before training. 
-
-
+python ../../mtts/text/gp2py.py -t "为适应新的网络传播方式和读者阅读习惯"
+>> sil wei4 shi4 ying4 xin1 de5 wang3 luo4 chuan2 bo1 fang1 shi4 he2 du2 zhe3 yue4 du2 xi2 guan4 sil|sil 为 适 应 新 的 网 络 传 播 方 式 和 读 者 阅 读 习 惯 sil
 ```
-python3 train.py
+
+By running the above script, high-quality audio examples can be found [here](./examples/aishell3/outputs/) and [here](./examples/biaobei/outputs/)
+
+## configurations
+Two config files are provided for illustation purpose. You can changed the config file if you know what you are doing. 
+For example, you can remove speaker_emb from the following section, or add  prosody embedding if you have prosody label (as in biaobei dataset). 
+``` yaml
+dataset:
+  train:
+    wav_scp: './train/wav.scp'
+    mel_scp: './train/mel.scp'
+    dur_scp: './train/dur.scp'
+    emb_type1:
+      _name: 'pinyin'
+      scp: './train/py.scp'
+      vocab: 'py.vocab'
+    emb_type2:
+      _name: 'graphic'
+      scp: './train/gp.scp'
+      vocab: 'gp.vocab'
+    #emb_type3:
+      #_name: 'speaker'
+     # scp: './train/spk.scp'
+     # vocab: # dosn't need vocab
+    emb_type4:
+      _name: 'prosody'
+      scp: './train/psd.scp'
+      vocab:
 ```
-you can monitor the log in '/home/\<user\>/.perf_logger/'
-
-Best practice: copy the ./data folder to /dev/shm to avoid harddisk reading (if you have big enough memorry)
-
-
-<b> The following are some spectrograms synthesized at step 300000 </b>
-
-![spect](./docs/data/step_300000_0.png)
-![spect](./docs/data/step_300000_2.png)
-![spect](./docs/data/step_300000_3.png)
-
-
-
-
-
-## TODO
-- Clean the training code
-- Add gan for better spectrogram prediction
-- Add Aishell3 support
-
-
-# References
-- <a href="https://github.com/ming024/FastSpeech2">FastSpeech2</a>. 
-
-- [FastSpeech 2: Fast and High-Quality End-to-End Text to Speech](https://arxiv.org/abs/2006.04558), Y. Ren, *et al*.
-
-
-
-
-
 

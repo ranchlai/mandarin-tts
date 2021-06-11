@@ -1,0 +1,6 @@
+[submodule "mtts/models/vocoder/VocGAN"]
+	path = mtts/models/vocoder/VocGAN
+	url = https://github.com/ranchlai/VocGAN.git
+[submodule "mtts/models/vocoder/hifi_gan"]
+	path = mtts/models/vocoder/hifi_gan
+	url = https://github.com/ranchlai/hifi-gan.git

@@ -1,3 +1,4 @@
+**/.pre-commit-config.yaml
 **/*.ipynb
 BZNSYP
 ckpt
@@ -11,3 +12,4 @@ samples
 synth
 **/.ipynb_checkpoints/**
 **/__pycache__/
+mtts.egg-info/
