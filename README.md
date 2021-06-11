@@ -7,7 +7,7 @@ This is a modularized Text-to-speech framework aiming to support fast research a
 - durations/pitch/energy variance predictor are supported, and other variances can be added easily, 
 - and more on the road-map. 
 
-Contribuations are welcome. 
+Contributions are welcome. 
 
 ### Audio samples
 
@@ -27,44 +27,52 @@ pip install -e .  # this is necessary!
 ```
 
 ### Training
-Two examples are provided: biaobei and aishell3.
-First prepare the melspectrogram features using [./examples/wav2mel.py](./examples/wav2mel.py)
+Two examples are provided here: [./examples/biaobei)](./examples/biaobei) and [./examples/aishell3](./examples/aishell3).
 
+To train your own models, first make a copy from existing examples, then  prepare the melspectrogram features using [./examples/wav2mel.py](./examples/wav2mel.py) by
 ``` sh
 cd examples
-python wav2mel.py -c ./aishell3/config.yaml -w <aishell3_wav_folder> -m ./aishell3/mels -d cpu
+python wav2mel.py -c ./aishell3/config.yaml -w <aishell3_wav_folder> -m <mel_folder> -d cpu
 ```
 
-Then prepare the scp files necessary for training, 
+prepare the scp files necessary for training, 
 ``` sh
-cd aishell3
-python prepare.py --wav_folder <aishell3_wav_folder>  --mel_folder ../mels/ --dst_folder ./train/
+cd examples/aishell3
+python prepare.py --wav_folder <aishell3_wav_folder>  --mel_folder <mel_folder> --dst_folder ./train/
 ```
+This will generate scp files required by config.yaml (in the dataset/train section). 
+You would also need to check that everything is fine in the [config file](./examples/aishell3/config.yaml). 
+Usually you don't need to change the code. 
 
 Now you can start your training by 
 ``` sh
 cd examples/aishell3
-python ../../mtts/train.py -c config.yaml -d cuda:0
+python ../../mtts/train.py -c config.yaml -d cuda
 ```
 
-For biaobei dataset, the workflow is the same, except that there is no speaker embedding and you can add prosody embedding. 
+For biaobei dataset, the workflow is the same, except that there is no speaker embedding but you can add prosody embedding. 
 
 ### Synthesize 
 ``` sh
 python ../../mtts/synthesize.py  -d cuda --c config.yaml --checkpoint ./checkpoints/checkpoint_1240000.pth.tar -i input.txt
 ```
+Checkpoints to get started: [aishell3](https://zenodo.org/record/4912321#.YMN2-FMzakA) and [Biaobei](https://zenodo.org/record/4910507#.YMN29lMzakA)
 
-#### Input text prepare
-You can generate input text by 
+<b> About input text </b>
+The [input.txt]('./examples/aishell3/input.txt) should be consistent with your setting  of emb_type1 to emb_type_n in config file, i.e., same type, same order.
+
+To facilitate transcription of hanzi to pinyin, you can try:
 ```
+cd examples/aishell3/
 python ../../mtts/text/gp2py.py -t "为适应新的网络传播方式和读者阅读习惯"
 >> sil wei4 shi4 ying4 xin1 de5 wang3 luo4 chuan2 bo1 fang1 shi4 he2 du2 zhe3 yue4 du2 xi2 guan4 sil|sil 为 适 应 新 的 网 络 传 播 方 式 和 读 者 阅 读 习 惯 sil
 ```
+Not you can copy the text to [input.txt](./examples/aishell3/input.txt), and remember to put down the self-defined name and speaker id, separated by '|'. 
 
-By running the above script, high-quality audio examples can be found [here](./examples/aishell3/outputs/) and [here](./examples/biaobei/outputs/)
+If goes well, audio examples can be found [here](./examples/aishell3/outputs/) and [here](./examples/biaobei/outputs/)
 
-## configurations
-Two config files are provided for illustation purpose. You can changed the config file if you know what you are doing. 
+## Configurations
+Two config files are provided in the examples for illustration purpose. You can changed the config file if you know what you are doing. 
 For example, you can remove speaker_emb from the following section, or add  prosody embedding if you have prosody label (as in biaobei dataset). 
 ``` yaml
 dataset:
@@ -89,4 +97,6 @@ dataset:
       scp: './train/psd.scp'
       vocab:
 ```
+
+
 

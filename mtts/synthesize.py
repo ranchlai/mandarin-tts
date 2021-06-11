@@ -106,6 +106,6 @@ if __name__ == '__main__':
         else:
             wav = to_int16(wav)
         dst_file = os.path.join(args.output_dir,f'{name}.wav')
-        np.save(dst_file+'.npy',mel_postnet.cpu().numpy())
+        #np.save(dst_file+'.npy',mel_postnet.cpu().numpy())
         logger.info(f'writing file to {dst_file}')
         wavfile.write(dst_file,sr,wav)

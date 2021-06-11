@@ -16,12 +16,18 @@ dataset:
       _name: 'speaker'
       scp: './train/spk.scp'
       vocab: # dosn't need vocab
+    # NOTE: you can add more embedding here without changing the code. 
+  eval: 
+    # NOTE: this is not used for now, i.e., just training, no evaluation. 
+    # You can use synthesize.py to check the training goes well, for now. 
+
+
 
 training:
   batch_size: 1024
   batch_split: 64
   
-  epochs: 10000100
+  epochs: 100000
   grad_clip_thresh: 1.0
   acc_step: 1
   checkpoint_path: "./checkpoints/"
@@ -33,7 +39,7 @@ training:
 
   evaluation_step: 1000
 
-optimizer:
+optimizer: # NOTE: if use SGD, params should change too, as it has different arguments.
     type: Adam
     n_warm_up_step: 2000
     lr_decrease_step: 10000
@@ -52,7 +58,7 @@ lr_scheduler:
       step_size_down: 5000
       cycle_momentum: False
 
-fbank:
+fbank: # this is used for wav2mel.py
   sample_rate: 22050
   n_fft: 1024
   hop_length: 256
@@ -60,10 +66,10 @@ fbank:
   max_wav_value: 32768.0
   n_mels: 80
   fmin: 0.0
-  fmax: 8000.0 # should be 11025
+  fmax: 8000.0 # should be 11025 ?
   mel_mean: -6.0304103
 
-encoder:
+encoder: 
     encoder_type: 'FS2TransformerEncoder'
     conf:
       n_layers: 4
@@ -92,10 +98,10 @@ speaker_embedding:
     enable: True
     vocab: #None
     vocab_size: 218 # aishell3 has 218 speakers
-    weight: 1.0
+    weight: 1.0 # you can play with weight here
     dim: 256
 
-utterence_embedding:
+utterence_embedding: 
     enable: False # not implemented
     type: 'lstm' # resnet
     feature_config:
@@ -111,7 +117,7 @@ hanzi_embedding:
     type: embedding
     vocab: './gp.vocab'
     dim: 256
-    weight: 0.5
+    weight: 0.5 # you can play with weight here
     max_seq_len: 100
 
 pinyin_embedding:
@@ -126,7 +132,7 @@ duration_predictor:
   input_dim: 256 # should be the same as encoder hiddien_dim
   filter_size: 256
   kernel_size: 3
-  dropout: 0.15
+  dropout: 0.15 # important to set dropout here
   duration_mean: 21.517294924096635 #for aishell3
 
 f0_predictor:
@@ -140,12 +146,12 @@ f0_predictor:
 vocoder:
    type: 'VocGan'
    params:
-     denoise: True
+     denoise: True 
 
-# vocoder:
+# vocoder: # not works well, try yourself. 
 #    type: HiFiGAN
 #    params:
-#      checkpoint: ../../../../code/hifi_gan/VCTK_V3/generator_v3
+#      checkpoint: ../../../../code/hifi_gan/VCTK_V3/generator_v3  # you need to download checkpoint and set the params here
 
 synthesis: 
   normalize: True # normalize the sound volume
