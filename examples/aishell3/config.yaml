@@ -15,7 +15,7 @@ dataset:
     emb_type3:
       _name: 'speaker'
       scp: './train/spk.scp'
-      vocab: # dosn't need vocab
+      vocab: ~ # dosn't need vocab
     # NOTE: you can add more embedding here without changing the code. 
   eval: 
     # NOTE: this is not used for now, i.e., just training, no evaluation. 
@@ -146,12 +146,26 @@ f0_predictor:
 vocoder:
    type: 'VocGan'
    params:
-     denoise: True 
+   # checkpoint: ~/checkpoints/ljspeech_29de09d_4000.pt 
+    checkpoint: ~/checkpoints/vctk_pretrained_model_3180.pt
+    denoise: True 
+    device: cpu
 
 # vocoder: # not works well, try yourself. 
 #    type: HiFiGAN
 #    params:
-#      checkpoint: ../../../../code/hifi_gan/VCTK_V3/generator_v3  # you need to download checkpoint and set the params here
+#      checkpoint: ~/checkpoints/VCTK_V3/generator_v3  # you need to download checkpoint and set the params here
+#      device: cpu
+
+# vocoder:
+#    type: 'Waveglow'
+#    params:
+#     checkpoint:  ~/checkpoints/waveglow_256channels_universal_v5_state_dict.pt 
+#     sigma: 1.0 
+#     denoiser_strength: 0.0 # try 0.1
+#     device: cpu #try cpu if out of memory
+
+
 
 synthesis: 
   normalize: True # normalize the sound volume
