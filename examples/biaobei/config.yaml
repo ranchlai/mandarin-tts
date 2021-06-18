@@ -52,10 +52,27 @@ lr_scheduler:
       cycle_momentum: False
 
 vocoder:
-    type: 'VocGan'
-    params:
-      denoise: True
-      
+   type: 'VocGan'
+   params:
+   # checkpoint: ~/checkpoints/ljspeech_29de09d_4000.pt 
+    checkpoint: ~/checkpoints/vctk_pretrained_model_3180.pt
+    denoise: True 
+    device: cpu
+
+# vocoder: 
+#    type: HiFiGAN
+#    params:
+#      checkpoint: ~/checkpoints/VCTK_V3/generator_v3  # you need to download checkpoint and set the params here
+#      device: cpu
+
+# vocoder:
+#    type: 'Waveglow'
+#    params:
+#     checkpoint:  ~/checkpoints/waveglow_256channels_universal_v5_state_dict.pt 
+#     sigma: 1.0 
+#     denoiser_strength: 0.0 # try 0.1
+#     device: cpu #try cpu if out of memory
+
       
 
 fbank:
