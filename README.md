@@ -52,13 +52,33 @@ python ../../mtts/train.py -c config.yaml -d cuda
 
 For biaobei dataset, the workflow is the same, except that there is no speaker embedding but you can add prosody embedding. 
 
-### Synthesize 
-``` sh
-python ../../mtts/synthesize.py  -d cuda --c config.yaml --checkpoint ./checkpoints/checkpoint_1240000.pth.tar -i input.txt
-```
-Checkpoints to get started: [aishell3](https://zenodo.org/record/4912321#.YMN2-FMzakA) and [Biaobei](https://zenodo.org/record/4910507#.YMN29lMzakA)
+More examples will be added. Please stay. 
 
-<b> About input text </b>
+### Synthesize 
+
+#### Supported vocoders
+Vocoders play the role of converting melspectrograms to waveforms. They are added as submodules and will be be trained in this project. Hence you should download the checkpoints before synthesizing. In training, vocoders are not necessary, as you can monitor the training process from generated melspectrograms and also the loss curve. Current we support the following vocoders, 
+
+| Vocoder | checkpoint| github |
+| --------------- | --------------- | --------------- |
+| Waveglow | [link](https://drive.google.com/file/d/1RxvxtOlzUUvUj2dAaBKgptHC6NyMqMm3/view?usp=sharing) | [link](https://github.com/ranchlai/waveglow.git)|
+| hifi-gan | [link](https://drive.google.com/drive/folders/1-eEYTB5Av9jNql0WGBlRoi-WH2J7bp5Y) | [link](https://github.com/ranchlai/hifi-gan)
+| VocGAN |[link](https://drive.google.com/file/d/1nfD84ot7o3u2tFR7YkSp2vQWVnNJ-md_/view) [link](https://zenodo.org/record/4743731/files/vctk_pretrained_model_3180.pt)|[link](https://github.com/ranchlai/VocGAN) |
+
+All vocoders will be ready after running ```git submodule update --force --recursive --init --remote```. However, you have to download the checkpoint manually and properly set the path in the config.yaml file. 
+
+#### Pretrained mtts checkpoints
+
+Currently two examples are provided, and the corresponding checkpoints/configs are summarized as follows. 
+
+| dataset | checkpoint| config |
+| --------------- | --------------- | --------------- |
+| aishell3 | [link](https://zenodo.org/record/4912321#.YMN2-FMzakA) | [link](./examples/aishell3/config.yaml)|
+| biaobei | [link](https://zenodo.org/record/4910507#.YMN29lMzakA) | [link](./examples/biaobei/config.yaml)|
+
+#### Preparing your input text
+
+
 The [input.txt]('./examples/aishell3/input.txt) should be consistent with your setting  of emb_type1 to emb_type_n in config file, i.e., same type, same order.
 
 To facilitate transcription of hanzi to pinyin, you can try:
@@ -69,7 +89,16 @@ python ../../mtts/text/gp2py.py -t "为适应新的网络传播方式和读者�
 ```
 Not you can copy the text to [input.txt](./examples/aishell3/input.txt), and remember to put down the self-defined name and speaker id, separated by '|'. 
 
-If goes well, audio examples can be found [here](./examples/aishell3/outputs/) and [here](./examples/biaobei/outputs/)
+
+#### Synthesizing your waves
+With the above checkpoints and text ready, finally you can run the synthesis process, 
+``` sh
+python ../../mtts/synthesize.py  -d cuda --c config.yaml --checkpoint ./checkpoints/checkpoint_1240000.pth.tar -i input.txt
+```
+Please check the config.yaml file for the vocoder settings. 
+
+If it goes well, audio examples can be found [here](./examples/aishell3/outputs/) and [here](./examples/biaobei/outputs/). 
+
 
 ## Configurations
 Two config files are provided in the examples for illustration purpose. You can changed the config file if you know what you are doing. 

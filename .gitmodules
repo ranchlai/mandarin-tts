@@ -4,3 +4,6 @@
 [submodule "mtts/models/vocoder/hifi_gan"]
 	path = mtts/models/vocoder/hifi_gan
 	url = https://github.com/ranchlai/hifi-gan.git
+[submodule "mtts/models/vocoder/waveglow"]
+	path = mtts/models/vocoder/waveglow
+	url = https://github.com/ranchlai/waveglow.git
