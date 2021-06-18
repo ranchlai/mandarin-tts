@@ -5,7 +5,7 @@ import subprocess
 from string import punctuation
 
 from mtts.text import TextProcessor
-from mtts.models.vocoder import VocGan, HiFiGAN
+from mtts.models.vocoder import VocGan, HiFiGAN,Waveglow
 import librosa
 import numpy as np
 import torch
@@ -25,7 +25,7 @@ with_ffmpeg = check_ffmpeg()
 
 def get_vocoder(device,config):
     VocoderClass = eval(config['vocoder']['type'])
-    model = VocoderClass(device=device,**config['vocoder']['params'])
+    model = VocoderClass(**config['vocoder']['params'])
     return model
 
 def normalize(wav):
