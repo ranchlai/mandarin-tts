@@ -12,7 +12,7 @@ Contributions are welcome.
 ### Audio samples
 
 - Interesting audio samples for aishell3 added [here](./docs/samples/aishell3).
-- The <a href="https://ranchlai.github.io/mandarin-tts/">github page</a> also hosts some samples for both [biaobei](https://www.data-baker.com/en/#/data/index/source) and [aishell3](https://www.openslr.org/93/).
+- The <a href="https://ranchlai.github.io/mandarin-tts/">github page</a> also hosts some samples for  [biaobei](https://www.data-baker.com/en/#/data/index/source) and [aishell3](https://www.openslr.org/93/) datasets.
 
 ## Quick start
 
@@ -27,9 +27,9 @@ pip install -e .  # this is necessary!
 ```
 
 ### Training
-Two examples are provided here: [./examples/biaobei)](./examples/biaobei) and [./examples/aishell3](./examples/aishell3).
+Two examples are provided here: [biaobei](./examples/biaobei) and [aishell3](./examples/aishell3). 
 
-To train your own models, first make a copy from existing examples, then  prepare the melspectrogram features using [./examples/wav2mel.py](./examples/wav2mel.py) by
+To train your own models, first make a copy from existing examples, then  prepare the melspectrogram features using [wav2mel.py](./examples/wav2mel.py) by
 ``` sh
 cd examples
 python wav2mel.py -c ./aishell3/config.yaml -w <aishell3_wav_folder> -m <mel_folder> -d cpu
@@ -56,6 +56,15 @@ More examples will be added. Please stay.
 
 ### Synthesize 
 
+#### Pretrained mtts checkpoints
+
+Currently two examples are provided, and the corresponding checkpoints/configs are summarized as follows. 
+
+| dataset | checkpoint| config |
+| --------------- | --------------- | --------------- |
+| aishell3 | [link](https://zenodo.org/record/4912321#.YMN2-FMzakA) | [link](./examples/aishell3/config.yaml)|
+| biaobei | [link](https://zenodo.org/record/4910507#.YMN29lMzakA) | [link](./examples/biaobei/config.yaml)|
+
 #### Supported vocoders
 Vocoders play the role of converting melspectrograms to waveforms. They are added as submodules and will be be trained in this project. Hence you should download the checkpoints before synthesizing. In training, vocoders are not necessary, as you can monitor the training process from generated melspectrograms and also the loss curve. Current we support the following vocoders, 
 
@@ -67,17 +76,7 @@ Vocoders play the role of converting melspectrograms to waveforms. They are adde
 
 All vocoders will be ready after running ```git submodule update --force --recursive --init --remote```. However, you have to download the checkpoint manually and properly set the path in the config.yaml file. 
 
-#### Pretrained mtts checkpoints
-
-Currently two examples are provided, and the corresponding checkpoints/configs are summarized as follows. 
-
-| dataset | checkpoint| config |
-| --------------- | --------------- | --------------- |
-| aishell3 | [link](https://zenodo.org/record/4912321#.YMN2-FMzakA) | [link](./examples/aishell3/config.yaml)|
-| biaobei | [link](https://zenodo.org/record/4910507#.YMN29lMzakA) | [link](./examples/biaobei/config.yaml)|
-
 #### Preparing your input text
-
 
 The [input.txt]('./examples/aishell3/input.txt) should be consistent with your setting  of emb_type1 to emb_type_n in config file, i.e., same type, same order.
 
@@ -97,35 +96,9 @@ python ../../mtts/synthesize.py  -d cuda --c config.yaml --checkpoint ./checkpoi
 ```
 Please check the config.yaml file for the vocoder settings. 
 
-If it goes well, audio examples can be found [here](./examples/aishell3/outputs/) and [here](./examples/biaobei/outputs/). 
+If lucky, audio examples can be found in the [output folder](./examples/aishell3/outputs/). 
 
 
-## Configurations
-Two config files are provided in the examples for illustration purpose. You can changed the config file if you know what you are doing. 
-For example, you can remove speaker_emb from the following section, or add  prosody embedding if you have prosody label (as in biaobei dataset). 
-``` yaml
-dataset:
-  train:
-    wav_scp: './train/wav.scp'
-    mel_scp: './train/mel.scp'
-    dur_scp: './train/dur.scp'
-    emb_type1:
-      _name: 'pinyin'
-      scp: './train/py.scp'
-      vocab: 'py.vocab'
-    emb_type2:
-      _name: 'graphic'
-      scp: './train/gp.scp'
-      vocab: 'gp.vocab'
-    #emb_type3:
-      #_name: 'speaker'
-     # scp: './train/spk.scp'
-     # vocab: # dosn't need vocab
-    emb_type4:
-      _name: 'prosody'
-      scp: './train/psd.scp'
-      vocab:
-```
 
 
 

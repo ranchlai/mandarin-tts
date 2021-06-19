@@ -7,3 +7,6 @@
 [submodule "mtts/models/vocoder/waveglow"]
 	path = mtts/models/vocoder/waveglow
 	url = https://github.com/ranchlai/waveglow.git
+[submodule "mtts/models/vocoder/melgan"]
+	path = mtts/models/vocoder/melgan
+	url = https://github.com/ranchlai/melgan.git
