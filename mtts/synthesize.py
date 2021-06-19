@@ -5,7 +5,7 @@ import subprocess
 from string import punctuation
 
 from mtts.text import TextProcessor
-from mtts.models.vocoder import VocGan, HiFiGAN,Waveglow
+from mtts.models.vocoder import *
 import librosa
 import numpy as np
 import torch

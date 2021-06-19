@@ -143,13 +143,24 @@ f0_predictor:
   n_bins: 256
 
 
+
+  
 vocoder:
-   type: 'VocGan'
-   params:
-   # checkpoint: ~/checkpoints/ljspeech_29de09d_4000.pt 
-    checkpoint: ~/checkpoints/vctk_pretrained_model_3180.pt
-    denoise: True 
+  type: MelGAN
+  params:
+    checkpoint: ~/checkpoints/melgan/melgan_ljspeech.pth
+    config: ~/checkpoints/melgan/default.yaml
     device: cpu
+    
+
+    
+# vocoder:
+#    type: 'VocGan'
+#    params:
+#    # checkpoint: ~/checkpoints/ljspeech_29de09d_4000.pt 
+#     checkpoint: ~/checkpoints/vctk_pretrained_model_3180.pt
+#     denoise: True 
+#     device: cpu
 
 # vocoder: # not works well, try yourself. 
 #    type: HiFiGAN
