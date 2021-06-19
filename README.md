@@ -74,6 +74,9 @@ Vocoders play the role of converting melspectrograms to waveforms. They are adde
 | hifi-gan | [link](https://drive.google.com/drive/folders/1-eEYTB5Av9jNql0WGBlRoi-WH2J7bp5Y) | [link](https://github.com/ranchlai/hifi-gan)
 | VocGAN |[link](https://drive.google.com/file/d/1nfD84ot7o3u2tFR7YkSp2vQWVnNJ-md_/view) [link](https://zenodo.org/record/4743731/files/vctk_pretrained_model_3180.pt)|[link](https://github.com/ranchlai/VocGAN) |
 
+| MelGAN |[link](https://drive.google.com/drive/folders/1tcg7ZK-X6RYM6-rB9_-CXvS4e_qwe_Z5?usp=sharing) |[link](https://github.com/ranchlai/melgan) |
+
+
 All vocoders will be ready after running ```git submodule update --force --recursive --init --remote```. However, you have to download the checkpoint manually and properly set the path in the config.yaml file. 
 
 #### Preparing your input text
