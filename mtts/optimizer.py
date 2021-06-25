@@ -19,10 +19,9 @@ class ScheduledOptim():
         self._optimizer.zero_grad()
 
     def _get_lr_scale(self):
-        return np.min([
-            np.power(self.n_current_steps, -0.5),
-            np.power(self.n_warmup_steps, -1.5) * self.n_current_steps
-        ])
+        return np.min(
+            [np.power(self.n_current_steps, -0.5),
+             np.power(self.n_warmup_steps, -1.5) * self.n_current_steps])
 
     def _update_learning_rate(self):
         ''' Learning rate scheduling per step '''

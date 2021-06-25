@@ -8,8 +8,7 @@ class FS2Loss(nn.Module):
         self.mse_loss = nn.MSELoss()
         self.mae_loss = nn.L1Loss()
 
-    def forward(self, d_pred, d_truth, mel_pred, mel_postnet, mel_truth,
-                src_mask, mel_mask):
+    def forward(self, d_pred, d_truth, mel_pred, mel_postnet, mel_truth, src_mask, mel_mask):
         d_pred = d_pred.masked_select(src_mask)
         d_truth = d_truth.masked_select(src_mask)
 
