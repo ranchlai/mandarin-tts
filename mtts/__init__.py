@@ -1,4 +1,1 @@
-from . import text
-from . import models
-from . import datasets
-
+from . import datasets, models, text
