@@ -36,7 +36,7 @@ optimizer:
     type: Adam
     n_warm_up_step: 2000
     #lr_decrease_step: 10000
-    #lr_decrease_factor: 
+    #lr_decrease_factor:
     params:
       betas: [0.9,0.98]
       eps: !!float 1e-9
@@ -52,28 +52,23 @@ lr_scheduler:
       cycle_momentum: False
 
 vocoder:
-   type: 'VocGan'
-   params:
-   # checkpoint: ~/checkpoints/ljspeech_29de09d_4000.pt 
-    checkpoint: ~/checkpoints/vctk_pretrained_model_3180.pt
-    denoise: True 
+  type: VocGan # choose one of the following
+  MelGAN:
+    checkpoint: ~/checkpoints/melgan/melgan_ljspeech.pth
+    config: ~/checkpoints/melgan/default.yaml
     device: cpu
-
-# vocoder: 
-#    type: HiFiGAN
-#    params:
-#      checkpoint: ~/checkpoints/VCTK_V3/generator_v3  # you need to download checkpoint and set the params here
-#      device: cpu
-
-# vocoder:
-#    type: 'Waveglow'
-#    params:
-#     checkpoint:  ~/checkpoints/waveglow_256channels_universal_v5_state_dict.pt 
-#     sigma: 1.0 
-#     denoiser_strength: 0.0 # try 0.1
-#     device: cpu #try cpu if out of memory
-
-      
+  VocGan:
+    checkpoint: ~/checkpoints/vctk_pretrained_model_3180.pt #~/checkpoints/ljspeech_29de09d_4000.pt
+    denoise: True
+    device: cpu
+  HiFiGAN:
+    checkpoint: ~/checkpoints/VCTK_V3/generator_v3  # you need to download checkpoint and set the params here
+    device: cpu
+  Waveglow:
+    checkpoint:  ~/checkpoints/waveglow_256channels_universal_v5_state_dict.pt
+    sigma: 1.0
+    denoiser_strength: 0.0 # try 0.1
+    device: cpu #try cpu if out of memory
 
 fbank:
   sample_rate: 22050
@@ -113,7 +108,7 @@ postnet:
 speaker_embedding:
     enable: True
     vocab: #None
-    vocab_size: 1 # 
+    vocab_size: 1 #
     weight: 1.0
     dim: 256
 
@@ -161,5 +156,5 @@ f0_predictor:
   kernel_size: 3
   dropout: 0.5
   n_bins: 256
-synthesis: 
+synthesis:
   normalize: True # normalize the sound volume

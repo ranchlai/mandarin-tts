@@ -16,17 +16,17 @@ dataset:
       _name: 'speaker'
       scp: './train/spk.scp'
       vocab: ~ # dosn't need vocab
-    # NOTE: you can add more embedding here without changing the code. 
-  eval: 
-    # NOTE: this is not used for now, i.e., just training, no evaluation. 
-    # You can use synthesize.py to check the training goes well, for now. 
+    # NOTE: you can add more embedding here without changing the code.
+  eval:
+    # NOTE: this is not used for now, i.e., just training, no evaluation.
+    # You can use synthesize.py to check the training goes well, for now.
 
 
 
 training:
   batch_size: 1024
   batch_split: 64
-  
+
   epochs: 100000
   grad_clip_thresh: 1.0
   acc_step: 1
@@ -43,7 +43,7 @@ optimizer: # NOTE: if use SGD, params should change too, as it has different arg
     type: Adam
     n_warm_up_step: 2000
     lr_decrease_step: 10000
-    lr_decrease_factor: 
+    lr_decrease_factor:
     params:
       betas: [0.9,0.98]
       eps: !!float 1e-9
@@ -69,7 +69,7 @@ fbank: # this is used for wav2mel.py
   fmax: 8000.0 # should be 11025 ?
   mel_mean: -6.0304103
 
-encoder: 
+encoder:
     encoder_type: 'FS2TransformerEncoder'
     conf:
       n_layers: 4
@@ -101,7 +101,7 @@ speaker_embedding:
     weight: 1.0 # you can play with weight here
     dim: 256
 
-utterence_embedding: 
+utterence_embedding:
     enable: False # not implemented
     type: 'lstm' # resnet
     feature_config:
@@ -142,42 +142,26 @@ f0_predictor:
   dropout: 0.5
   n_bins: 256
 
-
-
-  
 vocoder:
-  type: MelGAN
-  params:
+  type: VocGan # choose one of the following
+  MelGAN:
     checkpoint: ~/checkpoints/melgan/melgan_ljspeech.pth
     config: ~/checkpoints/melgan/default.yaml
     device: cpu
-    
-
-    
-# vocoder:
-#    type: 'VocGan'
-#    params:
-#    # checkpoint: ~/checkpoints/ljspeech_29de09d_4000.pt 
-#     checkpoint: ~/checkpoints/vctk_pretrained_model_3180.pt
-#     denoise: True 
-#     device: cpu
-
-# vocoder: # not works well, try yourself. 
-#    type: HiFiGAN
-#    params:
-#      checkpoint: ~/checkpoints/VCTK_V3/generator_v3  # you need to download checkpoint and set the params here
-#      device: cpu
-
-# vocoder:
-#    type: 'Waveglow'
-#    params:
-#     checkpoint:  ~/checkpoints/waveglow_256channels_universal_v5_state_dict.pt 
-#     sigma: 1.0 
-#     denoiser_strength: 0.0 # try 0.1
-#     device: cpu #try cpu if out of memory
+  VocGan:
+    checkpoint: ~/checkpoints/vctk_pretrained_model_3180.pt #~/checkpoints/ljspeech_29de09d_4000.pt
+    denoise: True
+    device: cpu
+  HiFiGAN:
+    checkpoint: ~/checkpoints/VCTK_V3/generator_v3  # you need to download checkpoint and set the params here
+    device: cpu
+  Waveglow:
+    checkpoint:  ~/checkpoints/waveglow_256channels_universal_v5_state_dict.pt
+    sigma: 1.0
+    denoiser_strength: 0.0 # try 0.1
+    device: cpu #try cpu if out of memory
 
 
 
-synthesis: 
+synthesis:
   normalize: True # normalize the sound volume
-
