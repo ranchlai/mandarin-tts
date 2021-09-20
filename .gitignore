@@ -1,5 +1,6 @@
 **/.pre-commit-config.yaml
 **/*.ipynb
+*.wav
 BZNSYP
 ckpt
 log

@@ -58,8 +58,7 @@ def window_sumsquare(window,
     # Fill the envelope
     for i in range(n_frames):
         sample = i * hop_length
-        x[sample:min(n, sample +
-                     n_fft)] += win_sq[:max(0, min(n_fft, n - sample))]
+        x[sample:min(n, sample + n_fft)] += win_sq[:max(0, min(n_fft, n - sample))]
     return x
 
 

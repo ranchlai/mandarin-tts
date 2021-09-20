@@ -1,27 +1,30 @@
-from collections import OrderedDict
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from torch import Tensor
 
 from mtts.models.decoder import Decoder
 from mtts.models.encoder import FS2TransformerEncoder
-from mtts.models.fs2_variance import VarianceAdaptor, VariancePredictor
+from mtts.models.fs2_variance import VarianceAdaptor
 from mtts.models.postnet import PostNet
 from mtts.utils.logging import get_logger
+
+ENCODERS = [
+    FS2TransformerEncoder,
+]
+
 logger = get_logger(__file__)
 
 
 def __read_vocab(file):
     with open(file) as f:
         lines = f.read().split('\n')
-    lines = [l for l in lines if len(l) > 0]
+    lines = [line for line in lines if len(line) > 0]
     return lines
 
 
-def _get_layer(emb_config: dict):  #-> Optional[List[nn.Module],List[float]]:
+def _get_layer(emb_config: dict):  # -> Optional[List[nn.Module],List[float]]:
     logger.info(f'building embedding with config: {emb_config}')
     if emb_config['enable']:
         if emb_config['vocab'] is None:
@@ -56,8 +59,7 @@ def get_mask_from_lengths(lengths, max_len=None):
     batch_size = lengths.shape[0]
     if max_len is None:
         max_len = torch.max(lengths).item()
-    ids = torch.arange(0, max_len).unsqueeze(0).expand(batch_size,
-                                                       -1).to(lengths.device)
+    ids = torch.arange(0, max_len).unsqueeze(0).expand(batch_size, -1).to(lengths.device)
     mask = (ids >= lengths.unsqueeze(1).expand(-1, max_len))
 
     return mask
@@ -71,6 +73,7 @@ class FastSpeech2(nn.Module):
         emb_layers, emb_weights = _build_embedding_layers(config)
 
         EncoderClass = eval(config['encoder']['encoder_type'])
+        assert EncoderClass in ENCODERS
         encoder_conf = config['encoder']['conf']
         encoder_conf.update({'emb_layers': emb_layers})
         encoder_conf.update({'embeding_weights': emb_weights})
@@ -107,13 +110,11 @@ class FastSpeech2(nn.Module):
         encoder_output = self.encoder(input_seqs, src_mask)
 
         if d_target is not None:
-            variance_adaptor_output, d_prediction, _, _ = self.variance_adaptor(
-                encoder_output, src_mask, mel_mask, d_target, max_mel_len,
-                d_control)
+            variance_adaptor_output, d_prediction, _, _ = self.variance_adaptor(encoder_output, src_mask, mel_mask,
+                                                                                d_target, max_mel_len, d_control)
         else:
             variance_adaptor_output, d_prediction, mel_len, mel_mask = self.variance_adaptor(
-                encoder_output, src_mask, mel_mask, d_target, max_mel_len,
-                d_control)
+                encoder_output, src_mask, mel_mask, d_target, max_mel_len, d_control)
 
         decoder_output = self.decoder(variance_adaptor_output, mel_mask)
 

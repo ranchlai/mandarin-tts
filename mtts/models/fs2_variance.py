@@ -1,9 +1,6 @@
-import copy
-import math
 from collections import OrderedDict
 from typing import Optional
 
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -14,8 +11,7 @@ def get_mask_from_lengths(lengths, max_len=None):
     batch_size = lengths.shape[0]
     if max_len is None:
         max_len = torch.max(lengths).item()
-    ids = torch.arange(0, max_len).unsqueeze(0).expand(batch_size,
-                                                       -1).to(lengths.device)
+    ids = torch.arange(0, max_len).unsqueeze(0).expand(batch_size, -1).to(lengths.device)
     mask = (ids >= lengths.unsqueeze(1).expand(-1, max_len))
 
     return mask
@@ -30,11 +26,9 @@ def pad(input_ele, mel_max_length=None):
     out_list = list()
     for i, batch in enumerate(input_ele):
         if len(batch.shape) == 1:
-            one_batch_padded = F.pad(batch, (0, max_len - batch.size(0)),
-                                     "constant", 0.0)
+            one_batch_padded = F.pad(batch, (0, max_len - batch.size(0)), "constant", 0.0)
         elif len(batch.shape) == 2:
-            one_batch_padded = F.pad(batch, (0, 0, 0, max_len - batch.size(0)),
-                                     "constant", 0.0)
+            one_batch_padded = F.pad(batch, (0, 0, 0, max_len - batch.size(0)), "constant", 0.0)
         out_list.append(one_batch_padded)
     out_padded = torch.stack(out_list)
     return out_padded
@@ -94,8 +88,7 @@ class VarianceAdaptor(nn.Module):
                  kernel_size: int = 3,
                  dropout: float = 0.5):
         super(VarianceAdaptor, self).__init__()
-        self.duration_predictor = VariancePredictor(input_dim, filter_size,
-                                                    kernel_size, dropout)
+        self.duration_predictor = VariancePredictor(input_dim, filter_size, kernel_size, dropout)
         self.length_regulator = LengthRegulator()
         self.duration_mean = duration_mean
 
@@ -109,17 +102,14 @@ class VarianceAdaptor(nn.Module):
 
         log_duration_prediction = self.duration_predictor(x, src_mask)
         if duration_target is not None:
-            duration_rounded = torch.clamp(torch.round(
-                (duration_target + self.duration_mean) * d_control),
-                                           min=0)
+            duration_rounded = torch.clamp(torch.round((duration_target + self.duration_mean) * d_control), min=0)
 
             x, mel_len = self.length_regulator(x, duration_rounded, max_len)
         else:
             # duration_rounded = torch.clamp(
             #   (torch.round(torch.exp(log_duration_prediction)-hp.log_offset)*d_control), min=0)
             duration_rounded = torch.clamp(torch.round(
-                (log_duration_prediction.detach() + self.duration_mean) *
-                d_control),
+                (log_duration_prediction.detach() + self.duration_mean) * d_control),
                                            min=0)
             # print('duration',duration_rounded)
 
@@ -166,11 +156,7 @@ class LengthRegulator(nn.Module):
 
 class VariancePredictor(nn.Module):
     """ Duration, Pitch and Energy Predictor """
-    def __init__(self,
-                 encoder_dim: int = 256,
-                 filter_size: int = 256,
-                 kernel_size: int = 3,
-                 dropout: float = 0.5):
+    def __init__(self, encoder_dim: int = 256, filter_size: int = 256, kernel_size: int = 3, dropout: float = 0.5):
         super(VariancePredictor, self).__init__()
 
         self.input_size = encoder_dim
@@ -184,16 +170,10 @@ class VariancePredictor(nn.Module):
                           Conv(self.input_size,
                                self.filter_size,
                                kernel_size=self.kernel,
-                               padding=(self.kernel - 1) // 2)),
-                         ("relu_1", nn.LeakyReLU()),
-                         ("layer_norm_1", nn.LayerNorm(self.filter_size)),
-                         ("dropout_1", nn.Dropout(self.dropout)),
-                         ("conv1d_2",
-                          Conv(self.filter_size,
-                               self.filter_size,
-                               kernel_size=self.kernel,
-                               padding=1)), ("relu_2", nn.LeakyReLU()),
-                         ("layer_norm_2", nn.LayerNorm(self.filter_size)),
+                               padding=(self.kernel - 1) // 2)), ("relu_1", nn.LeakyReLU()),
+                         ("layer_norm_1", nn.LayerNorm(self.filter_size)), ("dropout_1", nn.Dropout(self.dropout)),
+                         ("conv1d_2", Conv(self.filter_size, self.filter_size, kernel_size=self.kernel, padding=1)),
+                         ("relu_2", nn.LeakyReLU()), ("layer_norm_2", nn.LayerNorm(self.filter_size)),
                          ("dropout_2", nn.Dropout(self.dropout))]))
 
         self.linear_layer = nn.Linear(self.conv_output_size, 1)

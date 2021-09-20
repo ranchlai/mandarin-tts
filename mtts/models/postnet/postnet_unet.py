@@ -41,8 +41,7 @@ class inconv(nn.Module):
 class down(nn.Module):
     def __init__(self, in_ch, out_ch, bn=True):
         super(down, self).__init__()
-        self.mpconv = nn.Sequential(nn.AvgPool2d(2),
-                                    double_res_conv(in_ch, out_ch, bn))
+        self.mpconv = nn.Sequential(nn.AvgPool2d(2), double_res_conv(in_ch, out_ch, bn))
 
     def forward(self, x):
         x = self.mpconv(x)
@@ -63,17 +62,12 @@ class up(nn.Module):
         if not self.bilinear:
             x1 = self.up(x1)
         else:
-            x1 = nn.functional.interpolate(x1,
-                                           scale_factor=2,
-                                           mode='bilinear',
-                                           align_corners=True)
+            x1 = nn.functional.interpolate(x1, scale_factor=2, mode='bilinear', align_corners=True)
 
         diffY = x2.size()[2] - x1.size()[2]
         diffX = x2.size()[3] - x1.size()[3]
 
-        x1 = F.pad(
-            x1,
-            (diffX // 2, diffX - diffX // 2, diffY // 2, diffY - diffY // 2))
+        x1 = F.pad(x1, (diffX // 2, diffX - diffX // 2, diffY // 2, diffY - diffY // 2))
 
         x = torch.cat([x2, x1], dim=1)
         x = self.conv(x)

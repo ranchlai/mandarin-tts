@@ -15,8 +15,7 @@ def get_sinusoid_encoding_table(n_position, d_hid, padding_idx=None):
     def get_posi_angle_vec(position):
         return [cal_angle(position, hid_j) for hid_j in range(d_hid)]
 
-    sinusoid_table = np.array(
-        [get_posi_angle_vec(pos_i) for pos_i in range(n_position)])
+    sinusoid_table = np.array([get_posi_angle_vec(pos_i) for pos_i in range(n_position)])
 
     sinusoid_table[:, 0::2] = np.sin(sinusoid_table[:, 0::2])  # dim 2i
     sinusoid_table[:, 1::2] = np.cos(sinusoid_table[:, 1::2])  # dim 2i+1
@@ -61,19 +60,14 @@ class MultiHeadAttention(nn.Module):
         self.w_ks = nn.Linear(d_model, n_head * d_k)
         self.w_vs = nn.Linear(d_model, n_head * d_v)
 
-        self.attention = ScaledDotProductAttention(
-            temperature=np.power(d_k, 0.5))
+        self.attention = ScaledDotProductAttention(temperature=np.power(d_k, 0.5))
         self.layer_norm = nn.LayerNorm(d_model)
 
         self.fc = nn.Linear(n_head * d_v, d_model)
 
         self.dropout = nn.Dropout(dropout)
 
-    def forward(self,
-                q: Tensor,
-                k: Tensor,
-                v: Tensor,
-                mask: Optional[Tensor] = None):
+    def forward(self, q: Tensor, k: Tensor, v: Tensor, mask: Optional[Tensor] = None):
 
         d_k, d_v, n_head = self.d_k, self.d_v, self.n_head
 
@@ -86,20 +80,15 @@ class MultiHeadAttention(nn.Module):
         q = self.w_qs(q).view(sz_b, len_q, n_head, d_k)
         k = self.w_ks(k).view(sz_b, len_k, n_head, d_k)
         v = self.w_vs(v).view(sz_b, len_v, n_head, d_v)
-        q = q.permute(2, 0, 1, 3).contiguous().view(-1, len_q,
-                                                    d_k)  # (n*b) x lq x dk
-        k = k.permute(2, 0, 1, 3).contiguous().view(-1, len_k,
-                                                    d_k)  # (n*b) x lk x dk
-        v = v.permute(2, 0, 1, 3).contiguous().view(-1, len_v,
-                                                    d_v)  # (n*b) x lv x dv
+        q = q.permute(2, 0, 1, 3).contiguous().view(-1, len_q, d_k)  # (n*b) x lq x dk
+        k = k.permute(2, 0, 1, 3).contiguous().view(-1, len_k, d_k)  # (n*b) x lk x dk
+        v = v.permute(2, 0, 1, 3).contiguous().view(-1, len_v, d_v)  # (n*b) x lv x dv
 
         mask = mask.repeat(n_head, 1, 1).to(q.device)
         output, attn = self.attention(q, k, v, mask=mask)
 
         output = output.view(n_head, sz_b, len_q, d_v)
-        output = output.permute(1, 2, 0,
-                                3).contiguous().view(sz_b, len_q,
-                                                     -1)  # b x lq x (n*dv)
+        output = output.permute(1, 2, 0, 3).contiguous().view(sz_b, len_q, -1)  # b x lq x (n*dv)
 
         output = self.dropout(self.fc(output))
         output = self.layer_norm(output + residual)
@@ -109,19 +98,12 @@ class MultiHeadAttention(nn.Module):
 
 class PositionwiseFeedForward(nn.Module):
     ''' A two-feed-forward-layer module '''
-    def __init__(self,
-                 d_in: int,
-                 d_hid: int,
-                 kernel_size: int = 9,
-                 dropout: float = 0.1):
+    def __init__(self, d_in: int, d_hid: int, kernel_size: int = 9, dropout: float = 0.1):
         super().__init__()
 
         # Use Conv1D
         # position-wise
-        self.w_1 = nn.Conv1d(d_in,
-                             d_hid,
-                             kernel_size=kernel_size,
-                             padding=(kernel_size - 1) // 2)
+        self.w_1 = nn.Conv1d(d_in, d_hid, kernel_size=kernel_size, padding=(kernel_size - 1) // 2)
         # position-wise
         self.w_2 = nn.Conv1d(d_hid, d_in, kernel_size=1, padding=0)
 
@@ -141,33 +123,15 @@ class PositionwiseFeedForward(nn.Module):
 
 class FFTBlock(torch.nn.Module):
     """FFT Block"""
-    def __init__(self,
-                 d_model: int,
-                 d_inner: int,
-                 n_head: int,
-                 d_k: int,
-                 d_v: int,
-                 dropout: float = 0.1):
+    def __init__(self, d_model: int, d_inner: int, n_head: int, d_k: int, d_v: int, dropout: float = 0.1):
         super(FFTBlock, self).__init__()
 
-        self.slf_attn = MultiHeadAttention(n_head,
-                                           d_model,
-                                           d_k,
-                                           d_v,
-                                           dropout=dropout)
-        self.pos_ffn = PositionwiseFeedForward(d_model,
-                                               d_inner,
-                                               dropout=dropout)
+        self.slf_attn = MultiHeadAttention(n_head, d_model, d_k, d_v, dropout=dropout)
+        self.pos_ffn = PositionwiseFeedForward(d_model, d_inner, dropout=dropout)
 
-    def forward(self,
-                enc_input: Tensor,
-                mask: Optional[Tensor] = None,
-                attn_mask: Optional[Tensor] = None):
+    def forward(self, enc_input: Tensor, mask: Optional[Tensor] = None, attn_mask: Optional[Tensor] = None):
 
-        enc_output, enc_slf_attn = self.slf_attn(enc_input,
-                                                 enc_input,
-                                                 enc_input,
-                                                 mask=attn_mask)
+        enc_output, enc_slf_attn = self.slf_attn(enc_input, enc_input, enc_input, mask=attn_mask)
         enc_output = enc_output.masked_fill(mask.unsqueeze(-1), 0)
 
         enc_output = self.pos_ffn(enc_output)

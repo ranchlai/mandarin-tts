@@ -1,7 +1,4 @@
-from typing import List
-
 import torch
-from torch import Tensor
 
 from mtts.datasets.dataset import Tokenizer
 from mtts.utils.logging import get_logger
@@ -30,7 +27,7 @@ class TextProcessor():
         n = max(seg_lens)
         # for k in seg_lens:
         # if k != n and k != 1:
-        #raise ValueError(f'Input segments should share the same length, but {k}!={n} for text {input}')
+        # raise ValueError(f'Input segments should share the same length, but {k}!={n} for text {input}')
 
         segments = [' '.join((s.split() * n)[:n]) if len(s.split()) != n else s for s in segments]
         token_tensor = []

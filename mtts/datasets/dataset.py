@@ -1,20 +1,19 @@
-import math
 import os
+from typing import List, Union
 
 import numpy as np
 import torch
+from torch import Tensor
 from torch.utils.data import DataLoader, Dataset
 
 from mtts.utils.logging import get_logger
+
 logger = get_logger(__file__)
-#from utils import pad_1D, pad_2D, process_meta
 
 
 def pad_1D(inputs, PAD=0):
     def pad_data(x, length, PAD):
-        x_padded = np.pad(x, (0, length - x.shape[0]),
-                          mode='constant',
-                          constant_values=PAD)
+        x_padded = np.pad(x, (0, length - x.shape[0]), mode='constant', constant_values=PAD)
         return x_padded
 
     max_len = max((len(x) for x in inputs))
@@ -30,9 +29,7 @@ def pad_2D(inputs, maxlen=None):
             raise ValueError("not max_len")
 
         s = np.shape(x)[1]
-        x_padded = np.pad(x, (0, max_len - np.shape(x)[0]),
-                          mode='constant',
-                          constant_values=PAD)
+        x_padded = np.pad(x, (0, max_len - np.shape(x)[0]), mode='constant', constant_values=PAD)
         return x_padded[:, :s]
 
     if maxlen:
@@ -42,11 +39,6 @@ def pad_2D(inputs, maxlen=None):
         output = np.stack([pad(x, max_len) for x in inputs])
 
     return output
-
-
-from typing import List, Union
-
-from torch import Tensor
 
 
 class Tokenizer:
@@ -75,7 +67,7 @@ class Tokenizer:
 def read_scp(scp_file):
     with open(scp_file, 'rt') as f:
         lines = f.read().split('\n')
-    name2value = {l.split()[0]: l.split()[1:] for l in lines if len(l) > 0}
+    name2value = {line.split()[0]: line.split()[1:] for line in lines if len(line) > 0}
     return name2value
 
 
@@ -95,7 +87,6 @@ def check_duplicate(keys):
 
 def check_keys(*args) -> None:
     assert len(args) > 0
-    kv0 = args[0]
     for kv in args:
         dup = check_duplicate(list(kv.keys()))
         if dup:
@@ -130,18 +121,11 @@ class Dataset(Dataset):
         check_keys(*kv_to_check)
 
         self.names = [name for name in self.name2mel]
-        mel_size = {
-            name: os.path.getsize(self.name2mel[name][0])
-            for name in self.names
-        }
+        mel_size = {name: os.path.getsize(self.name2mel[name][0]) for name in self.names}
 
         self.names = sorted(self.names, key=lambda x: mel_size[x])
-        logger.info(
-            f'Shape of longest mel: {np.load(self.name2mel[self.names[-1]][0]).shape}'
-        )
-        logger.info(
-            f'Shape of shortest mel: {np.load(self.name2mel[self.names[0]][0]).shape}'
-        )
+        logger.info(f'Shape of longest mel: {np.load(self.name2mel[self.names[-1]][0]).shape}')
+        logger.info(f'Shape of shortest mel: {np.load(self.name2mel[self.names[0]][0]).shape}')
 
     def __len__(self):
         return len(self.name2wav)
@@ -174,16 +158,14 @@ def pad_1d_tensor(x, n):
 def pad_2d_tensor(x, n):
     if x.shape[1] >= n:
         return x
-    x = torch.cat(
-        [x, torch.zeros((x.shape[0], n - x.shape[1]), dtype=x.dtype)], 1)
+    x = torch.cat([x, torch.zeros((x.shape[0], n - x.shape[1]), dtype=x.dtype)], 1)
     return x
 
 
 def pad_mel(x, n):
     if x.shape[0] >= n:
         return x
-    x = torch.cat(
-        [x, torch.zeros((n - x.shape[0], x.shape[1]), dtype=x.dtype)], 0)
+    x = torch.cat([x, torch.zeros((n - x.shape[0], x.shape[1]), dtype=x.dtype)], 0)
     return x
 
 
@@ -191,7 +173,6 @@ def collate_fn(batch):
 
     seq_len = []
     mel_len = []
-    new_batch = []
     for (token_tensor, duration, mel) in batch:
         seq_len.append(duration.shape[-1])
         mel_len.append(mel.shape[0])
@@ -213,8 +194,7 @@ def collate_fn(batch):
     token_tensors = torch.cat(token_tensors, 1)
     mels = torch.cat(mels, 0)
 
-    return token_tensors, durations, mels, torch.tensor(seq_len), torch.tensor(
-        mel_len)
+    return token_tensors, durations, mels, torch.tensor(seq_len), torch.tensor(mel_len)
 
 
 if __name__ == "__main__":
@@ -222,8 +202,6 @@ if __name__ == "__main__":
     with open('../../examples/aishell3/config.yaml') as f:
         config = yaml.safe_load(f)
     dataset = Dataset(config)
-    #print(dataset[0])
-    from torch.utils.data import DataLoader
     dataloader = DataLoader(dataset, batch_size=6, collate_fn=collate_fn)
     batch = next(iter(dataloader))
     print(type(batch[-1]))

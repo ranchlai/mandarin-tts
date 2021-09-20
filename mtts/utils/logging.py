@@ -1,25 +1,12 @@
-  
 import logging
 import os
 import sys
-import json
-import time
-from typing import Any
-import multiprocessing
-from collections import OrderedDict
 
-import functools
 nesting_level = 0
 is_start = None
 
 
-def log(entry: Any):
-    global nesting_level
-    space = "-" * (4 * nesting_level)
-    logger.info("{}{}".format(space, entry))
-
-
-def get_logger(file_name,use_error_log=False, log_dir=None):
+def get_logger(file_name, use_error_log=False, log_dir=None):
 
     logger = logging.getLogger(file_name)
     logging_level = getattr(logging, 'INFO')
@@ -33,8 +20,7 @@ def get_logger(file_name,use_error_log=False, log_dir=None):
     else:
         log_dir = os.path.join(log_dir, "log.txt")
 
-    formatter = logging.Formatter(
-        fmt='%(asctime)s %(filename)s: %(levelname)s: %(message)s')
+    formatter = logging.Formatter(fmt='%(asctime)s %(filename)s: %(levelname)s: %(message)s')
 
     stdout_handler = logging.StreamHandler(sys.stdout)
     stdout_handler.setLevel(logging_level)
@@ -55,6 +41,3 @@ def get_logger(file_name,use_error_log=False, log_dir=None):
         logger.addHandler(stderr_handler)
     logger.propagate = False
     return logger
-
-
-
