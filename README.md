@@ -1,18 +1,22 @@
 # Chinese mandarin text to speech (MTTS)
 
 This is a modularized Text-to-speech framework aiming to support fast research and product developments. Main features include
-- all modules are configurable via yaml, 
-- speaker embedding / prosody embeding/ multi-stream  text embedding are supported and configurable, 
-- various vocoders (VocGAN, hifi-GAN, waveglow, melGAN) are supported by adapter so that comparison across different vocoders can be done easily, 
-- durations/pitch/energy variance predictor are supported, and other variances can be added easily, 
-- and more on the road-map. 
+- all modules are configurable via yaml,
+- speaker embedding / prosody embeding/ multi-stream  text embedding are supported and configurable,
+- various vocoders (VocGAN, hifi-GAN, waveglow, melGAN) are supported by adapter so that comparison across different vocoders can be done easily,
+- durations/pitch/energy variance predictor are supported, and other variances can be added easily,
+- and more on the road-map.
 
-Contributions are welcome. 
+Contributions are welcome.
 
 ### Audio samples
+Checkout the demo here
+[![eg](./docs/aishell3_demo.png)](https://www.bilibili.com/video/BV14K4y1o7xC/)
+
 
 - Interesting audio samples for aishell3 added [here](./docs/samples/aishell3).
 - The <a href="https://ranchlai.github.io/mandarin-tts/">github page</a> also hosts some samples for  [biaobei](https://www.data-baker.com/en/#/data/index/source) and [aishell3](https://www.openslr.org/93/) datasets.
+
 
 ## Quick start
 
@@ -27,7 +31,7 @@ pip install -e .  # this is necessary!
 ```
 
 ### Training
-Two examples are provided here: [biaobei](./examples/biaobei) and [aishell3](./examples/aishell3). 
+Two examples are provided here: [biaobei](./examples/biaobei) and [aishell3](./examples/aishell3).
 
 To train your own models, first make a copy from existing examples, then  prepare the melspectrogram features using [wav2mel.py](./examples/wav2mel.py) by
 ``` sh
@@ -35,30 +39,30 @@ cd examples
 python wav2mel.py -c ./aishell3/config.yaml -w <aishell3_wav_folder> -m <mel_folder> -d cpu
 ```
 
-prepare the scp files necessary for training, 
+prepare the scp files necessary for training,
 ``` sh
 cd examples/aishell3
 python prepare.py --wav_folder <aishell3_wav_folder>  --mel_folder <mel_folder> --dst_folder ./train/
 ```
-This will generate scp files required by config.yaml (in the dataset/train section). 
-You would also need to check that everything is fine in the [config file](./examples/aishell3/config.yaml). 
-Usually you don't need to change the code. 
+This will generate scp files required by config.yaml (in the dataset/train section).
+You would also need to check that everything is fine in the [config file](./examples/aishell3/config.yaml).
+Usually you don't need to change the code.
 
-Now you can start your training by 
+Now you can start your training by
 ``` sh
 cd examples/aishell3
 python ../../mtts/train.py -c config.yaml -d cuda
 ```
 
-For biaobei dataset, the workflow is the same, except that there is no speaker embedding but you can add prosody embedding. 
+For biaobei dataset, the workflow is the same, except that there is no speaker embedding but you can add prosody embedding.
 
-More examples will be added. Please stay. 
+More examples will be added. Please stay.
 
-### Synthesize 
+### Synthesize
 
 #### Pretrained mtts checkpoints
 
-Currently two examples are provided, and the corresponding checkpoints/configs are summarized as follows. 
+Currently two examples are provided, and the corresponding checkpoints/configs are summarized as follows.
 
 | dataset | checkpoint| config |
 | --------------- | --------------- | --------------- |
@@ -66,7 +70,7 @@ Currently two examples are provided, and the corresponding checkpoints/configs a
 | biaobei | [link](https://zenodo.org/record/4910507#.YMN29lMzakA) | [link](./examples/biaobei/config.yaml)|
 
 #### Supported vocoders
-Vocoders play the role of converting melspectrograms to waveforms. They are added as submodules and will be be trained in this project. Hence you should download the checkpoints before synthesizing. In training, vocoders are not necessary, as you can monitor the training process from generated melspectrograms and also the loss curve. Current we support the following vocoders, 
+Vocoders play the role of converting melspectrograms to waveforms. They are added as submodules and will be be trained in this project. Hence you should download the checkpoints before synthesizing. In training, vocoders are not necessary, as you can monitor the training process from generated melspectrograms and also the loss curve. Current we support the following vocoders,
 
 | Vocoder | checkpoint| github |
 | --------------- | --------------- | --------------- |
@@ -76,7 +80,7 @@ Vocoders play the role of converting melspectrograms to waveforms. They are adde
 | MelGAN |[link](https://drive.google.com/drive/folders/1tcg7ZK-X6RYM6-rB9_-CXvS4e_qwe_Z5?usp=sharing) |[link](https://github.com/ranchlai/melgan) |
 
 
-All vocoders will be ready after running ```git submodule update --force --recursive --init --remote```. However, you have to download the checkpoint manually and properly set the path in the config.yaml file. 
+All vocoders will be ready after running ```git submodule update --force --recursive --init --remote```. However, you have to download the checkpoint manually and properly set the path in the config.yaml file.
 
 #### Preparing your input text
 
@@ -88,19 +92,14 @@ cd examples/aishell3/
 python ../../mtts/text/gp2py.py -t "为适应新的网络传播方式和读者阅读习惯"
 >> sil wei4 shi4 ying4 xin1 de5 wang3 luo4 chuan2 bo1 fang1 shi4 he2 du2 zhe3 yue4 du2 xi2 guan4 sil|sil 为 适 应 新 的 网 络 传 播 方 式 和 读 者 阅 读 习 惯 sil
 ```
-Not you can copy the text to [input.txt](./examples/aishell3/input.txt), and remember to put down the self-defined name and speaker id, separated by '|'. 
+Not you can copy the text to [input.txt](./examples/aishell3/input.txt), and remember to put down the self-defined name and speaker id, separated by '|'.
 
 
 #### Synthesizing your waves
-With the above checkpoints and text ready, finally you can run the synthesis process, 
+With the above checkpoints and text ready, finally you can run the synthesis process,
 ``` sh
 python ../../mtts/synthesize.py  -d cuda --c config.yaml --checkpoint ./checkpoints/checkpoint_1240000.pth.tar -i input.txt
 ```
-Please check the config.yaml file for the vocoder settings. 
+Please check the config.yaml file for the vocoder settings.
 
-If lucky, audio examples can be found in the [output folder](./examples/aishell3/outputs/). 
-
-
-
-
-
+If lucky, audio examples can be found in the [output folder](./examples/aishell3/outputs/).
