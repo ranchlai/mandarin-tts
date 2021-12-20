@@ -1,0 +1,30 @@
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+    -   id: check-yaml
+    -   id: check-added-large-files
+        args: [--maxkb=20000]
+-   repo: https://gitlab.com/PyCQA/flake8
+    rev: 3.8.3
+    hooks:
+    -   id: flake8
+        args: [--max-line-length=131]
+-   repo: https://github.com/pre-commit/mirrors-yapf
+    rev: '231fe1633b84d0fa46d776b4d3a4d19a0c5e0c8b'  # Use the sha / tag you want to point at
+    hooks:
+    -   id: yapf
+-   repo: https://github.com/pycqa/isort
+    rev: 5.8.0
+    hooks:
+      - id: isort
+        name: isort (python)
+      - id: isort
+        name: isort (cython)
+        types: [cython]
+      - id: isort
+        name: isort (pyi)
+        types: [pyi]
