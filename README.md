@@ -26,7 +26,7 @@ Checkout the demo here
 git clone https://github.com/ranchlai/mandarin-tts.git
 cd mandarin-tts
 git submodule update --force --recursive --init --remote
-pip install -e .  # this is necessary!
+pip install -e . f
 
 ```
 
